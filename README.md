@@ -1,5 +1,24 @@
-Mọi người nhớ sử dụng môi trường ảo nhé py -m venv .venv
+# FASTAPI WORK MANAGER
 
-sau đó chạy lệnh: .venv/scripts/activate
+## GIỚI THIỆU
 
-sau đó cài pip install -r requirements.txt
+## CÀI ĐẶT
+Cài đặt môi trường ảo:
+```
+py -m venv .venv
+```
+
+kích hoạt môi trường ảo: 
+```
+.venv/scripts/activate
+```
+
+cài đặt packages:
+```
+pip install -r requirements.txt
+```
+
+migrate database:
+```
+alembic upgrade head
+```
