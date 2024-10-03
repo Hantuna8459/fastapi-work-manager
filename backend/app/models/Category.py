@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import String, DateTime, Text, UUID
 
-from backend.app.core.db import Base
+from core.database import Base
 
 
 class Category(Base):

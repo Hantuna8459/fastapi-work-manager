@@ -1,2 +1,4 @@
 .venv
 .env
+print_db_string.py
+*.pyc
