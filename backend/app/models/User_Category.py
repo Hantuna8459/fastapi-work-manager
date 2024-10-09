@@ -1,13 +1,13 @@
-from datetime import datetime
-from sqlalchemy.schema import Column, ForeignKey
-from sqlalchemy.types import String, Integer, DateTime, Text, UUID
+from sqlalchemy.schema import Column, ForeignKey, Table
+from sqlalchemy.types import UUID
 
-from core.database import Base
+from .Model_Base import Base
 
 
-class User_Category(Base):
-    __tablename__ = "user_category"
-    id = Column("id", Integer, primary_key= True, index= True)
-    user_id = Column("user_id", UUID, ForeignKey("user.id"), nullable=False)
-    category_id = Column("category_id", UUID, ForeignKey("category.id"), nullable=False)
-    created_time = Column("created_time", DateTime, default=datetime.now())
+User_Category = Table(
+    "user_category",
+    Base.metadata,
+    
+    Column("user_id", UUID, ForeignKey("user.id"), nullable=False),
+    Column("category_id", UUID, ForeignKey("category.id"), nullable=False),
+)
