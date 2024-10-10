@@ -21,9 +21,12 @@ async def auth_login(user = Depends(OAuth2PasswordRequestForm),
         raise InvalidUser
     
     token = auth.create_access_token({"id": user.id})
+    refresh_token = auth.create_refresh_token({"id": user.id})
     jwt_token = TokenBase(access_token=token,token_type="bearer")
-
+                       
     response = JSONResponse(jsonable_encoder(jwt_token))
     response.set_cookie(key="token",value=token,max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES*60,
                         httponly=True,secure=True,samesite="strict")
+    response.set_cookie(key="refresh_token", value=refresh_token, max_age=settings.REFRESH_TOKEN_EXPIRE_MINUTES*60,
+                        httponly=True, secure=True, samesite="strict")
     return response
