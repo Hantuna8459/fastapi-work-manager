@@ -13,4 +13,5 @@ async def auth_logout(request: Request):
     
     response = JSONResponse({"message": "Logout!"})
     response.delete_cookie("token")
+    response.delete_cookie("refresh_token")
     return response
