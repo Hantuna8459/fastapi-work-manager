@@ -1,5 +1,8 @@
 from datetime import datetime, timedelta
 from typing import Optional
+from uu import encode
+
+from dns.dnssecalgs import algorithms
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
 from jose import JWTError, jwt
@@ -13,6 +16,7 @@ ADMIN_SECRET = settings.ADMIN_SECRET
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+REFRESH_TOKEN_EXPIRE_MINUTES = 36000
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "token")
 
@@ -26,6 +30,17 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
     return encoded_jwt
+
+# create refresh token
+def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes = REFRESH_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    encode_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
+    return encode_jwt
 
 # get user from database
 def get_user(db: Session, username: str):
