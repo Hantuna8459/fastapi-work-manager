@@ -13,6 +13,7 @@ ADMIN_SECRET = settings.ADMIN_SECRET
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+REFRESH_TOKEN_EXPIRE_MINUTES = 3600
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "login")
 
