@@ -15,7 +15,7 @@ from backend.app.core.config import settings
 from backend.app.core import auth
 
 
-auth_router = APIRouter(prefix="auth")
+auth_router = APIRouter(prefix="/auth")
 pwd_context= CryptContext(schemes=[settings.CRYPTCONTEXT_SCHEME], deprecated="auto")
 
 
@@ -31,7 +31,7 @@ def get_hashed_password(password:str):
 def verify_password(password:str, user_password:str):
     return pwd_context.verify(password, user_password)   
 
-@auth_router.post("login")
+@auth_router.post("/login")
 async def auth_login(user = Depends(OAuth2PasswordRequestForm),
                      db = Depends(get_db)):
     
@@ -55,7 +55,7 @@ async def auth_login(user = Depends(OAuth2PasswordRequestForm),
                         httponly=True, secure=True, samesite="strict")
     return response
         
-@auth_router.get("logout")
+@auth_router.get("/logout")
 async def auth_logout(request: Request):
 
     NotLogin = HTTPException(
@@ -71,7 +71,7 @@ async def auth_logout(request: Request):
     response.delete_cookie("refresh_token")
     return response
 
-@auth_router.post("refresh-token")
+@auth_router.post("/refresh-token")
 def refresh_token(request: Request, db = Depends(get_db)):
     # Lấy refresh token từ cookies
     refresh_token = request.cookies.get("refresh_token")

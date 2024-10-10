@@ -3,8 +3,8 @@ from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import String, Text, UUID, Enum
 from sqlalchemy.orm import relationship, mapped_column , Mapped
 
-from models.Category import Category
-from models.User import User
+from .Category import Category
+from .User import User
 
 from .Model_Base import BaseModel
 
