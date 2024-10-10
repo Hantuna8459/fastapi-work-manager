@@ -3,7 +3,7 @@ from sqlalchemy.types import String, Text
 from sqlalchemy.orm import relationship
 
 from .Model_Base import BaseModel
-from models.User_Category import User_Category
+from .User_Category import User_Category
 
 
 class Category(BaseModel):

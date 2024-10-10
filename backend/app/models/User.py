@@ -5,7 +5,7 @@ from sqlalchemy.types import String, DateTime, Boolean
 
 from .Model_Base import BaseModel
 
-from models.User_Category import User_Category
+from .User_Category import User_Category
 
 
 class User(BaseModel):

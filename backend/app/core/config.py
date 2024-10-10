@@ -35,6 +35,11 @@ class Settings(BaseSettings):
     MAIL_USER:str
     MAIL_PASSWORD:str
     EMAILS_FROM_EMAIL:str|None=None
+
+    # settings for token
+    ADMIN_SECRET:str
+    SECRET_KEY:str
+    ALGORITHM:str
     
     @computed_field
     @property
@@ -52,6 +57,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES:int = 15 # change later
     REFRESH_TOKEN_EXPIRE_MINUTES:int = 60*24 # 1 day (change later)
     
-    # ALGORITHM:str
+    # Hashing password
+    CRYPTCONTEXT_SCHEME: str
     
 settings = Settings()
