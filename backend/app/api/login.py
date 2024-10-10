@@ -4,7 +4,7 @@ from backend.app.core import auth
 from backend.app.api.schema import UserLogin
 
 
-def login(db, user: UserLogin)
+def login(db, user: UserLogin):
     
     db_user = auth.get_user(db, user.username)
     if (not db_user) or (not verify_password(user.password, db_user.password)):
