@@ -7,16 +7,16 @@ from fastapi.security import OAuth2PasswordRequestForm
 from backend.app.core.config import settings
 from backend.app.core.database import get_db
 from .exception import *
+from .refresh_token import make_new_access_token
 from .schema import *
 from .login import login
 
-
 auth_router = APIRouter(prefix="/auth")
 
-@auth_router.post("login")
+@auth_router.post("/login")
 async def auth_login(user = Depends(OAuth2PasswordRequestForm),
                      db = Depends(get_db)):
-    
+
     dct = login(db, user)
     access_token = dct.get("access_token")
     refresh_token = dct.get("refresh_token")
@@ -29,14 +29,19 @@ async def auth_login(user = Depends(OAuth2PasswordRequestForm),
                         httponly=True, secure=True, samesite="strict")
     return response
 
-@auth_router.get("logout")
+@auth_router.get("/logout")
 async def auth_logout(request: Request):
 
     token = request.cookies.get("token")
     if not token:
         raise NotLogin
-    
+
     response = JSONResponse({"message": "Logout!"})
     response.delete_cookie("token")
     response.delete_cookie("refresh_token")
     return response
+
+@auth_router.post("/refresh-token")
+def refresh_access_token (request: Request, db = Depends(get_db)):
+    new_access_token = make_new_access_token(request, db)
+    return new_access_token
