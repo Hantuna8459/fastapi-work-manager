@@ -1,5 +1,5 @@
 from backend.app.api.util import verify_password
-from backend.app.api.exception import InvalidUser
+from backend.app.core.exception import InvalidUser
 from backend.app.core import auth
 from backend.app.api.schema import UserLogin
 

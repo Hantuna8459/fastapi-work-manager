@@ -3,7 +3,7 @@ from datetime import timedelta
 from fastapi import Depends, HTTPException, Request, status
 from jose import JWTError, jwt
 
-from backend.app.api.exception import CredentialsException
+from backend.app.core.exception import CredentialsException
 from backend.app.core.auth import SECRET_KEY, ALGORITHM, get_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
 from backend.app.core.database import get_db
 

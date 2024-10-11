@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from backend.app.core.config import settings
 from backend.app.core.database import get_db
-from .exception import *
+from backend.app.core.exception import *
 from .refresh_token import make_new_access_token
 from .schema import *
 from .login import login
