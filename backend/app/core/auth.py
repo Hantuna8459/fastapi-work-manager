@@ -53,20 +53,20 @@ def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encode_jwt
 
 # get user from database
-def get_user(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first()
+def get_user(db: Session, user_id: str):
+    return db.query(User).filter(User.id == user_id).first()
 
 # vertify user and information form token
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credeentials_exception = HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail = "Could not validate credentials", headers = {"WWW-Authenticate": "Bearer"}, )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms = [ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        user_id: str = payload.get("id")
+        if user_id is None:
             raise credeentials_exception
     except JWTError:
         raise credeentials_exception
-    user = get_user(db, username = username)
+    user = get_user(db, user_id = user_id)
     if user is None:
         raise credeentials_exception
     return user
@@ -84,19 +84,19 @@ def make_new_access_token(request: Request, db = Depends(get_db)):
 
     try:
         payload = jwt.decode(refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        user_id: str = payload.get("id")
+        if user_id is None:
             raise CredentialsException
     except JWTError:
         raise CredentialsException
 
     # is user in DB
-    user = get_user(db, username=username)
+    user = get_user(db, user_id = user_id)
     if user is None:
         raise CredentialsException
 
     # make new access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
+    access_token = create_access_token(data={"id": user.id}, expires_delta=access_token_expires)
 
     return {"access_token": access_token, "token_type": "bearer"}
