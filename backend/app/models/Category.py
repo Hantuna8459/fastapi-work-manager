@@ -12,5 +12,5 @@ class Category(BaseModel):
     name = Column("name", String(25), nullable=False, unique=True)
     description = Column("description", Text, nullable=False)
     
-    created_by = relationship("User", secondary=User_Category, back_populates="category", cascade="all, delete-orphan")
+    created_by = relationship("User", secondary=User_Category, back_populates="category")
     

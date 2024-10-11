@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from backend.app.core.exception import NotLogin
@@ -7,7 +7,6 @@ logout_router = APIRouter()
 
 @logout_router.post("/logout")
 async def auth_logout(request: Request):
-
     token = request.cookies.get("token")
     if not token:
         raise NotLogin
