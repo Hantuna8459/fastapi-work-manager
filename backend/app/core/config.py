@@ -9,41 +9,37 @@ from pydantic import (
     PostgresDsn,
 )
 
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file="../.env",
+        env_file=".env",
         env_ignore_empty=True,
         extra="ignore"
-    ) # Pydantic .env support
-    
-    SECRET_KEY:str
-    
-    PROJECT_NAME:str
-    
-    # settings for db 
-    DB_NAME:str
-    DB_USER:str
-    DB_PASSWORD:str
-    DB_HOST:str
-    DB_PORT:int
-    
-    # settings for mail
-    MAIL_TLS:bool = True
-    MAIL_SSL:bool = False
-    MAIL_HOST:str
-    MAIL_PORT:int = 587
-    MAIL_USER:str
-    MAIL_PASSWORD:str
-    EMAILS_FROM_EMAIL:str|None=None
+    )  # Pydantic .env support
 
-    # settings for token
-    ADMIN_SECRET:str
-    SECRET_KEY:str
-    ALGORITHM:str
-    
+    SECRET_KEY: str
+
+    PROJECT_NAME: str
+
+    # settings for db
+    DB_NAME: str
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_HOST: str
+    DB_PORT: int
+
+    # settings for mail
+    MAIL_TLS: bool = True
+    MAIL_SSL: bool = False
+    MAIL_HOST: str
+    MAIL_PORT: int = 587
+    MAIL_USER: str
+    MAIL_PASSWORD: str
+    EMAILS_FROM_EMAIL: str | None = None
+
     @computed_field
     @property
-    def SQLALCHEMY_DATABASE_URI(self)->PostgresDsn:
+    def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
         return MultiHostUrl.build(
             scheme="postgresql+psycopg2",
             username=self.DB_USER,
@@ -52,12 +48,12 @@ class Settings(BaseSettings):
             port=self.DB_PORT,
             path=self.DB_NAME,
         )
-    
+
     # settings for tokens
-    ACCESS_TOKEN_EXPIRE_MINUTES:int = 15 # change later
-    REFRESH_TOKEN_EXPIRE_MINUTES:int = 60*24 # 1 day (change later)
-    
-    # Hashing password
-    CRYPTCONTEXT_SCHEME: str
-    
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15  # change later
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day (change later)
+
+    # ALGORITHM:str
+
+
 settings = Settings()
