@@ -11,7 +11,7 @@ from pydantic import (
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file="../.env",
         env_ignore_empty=True,
         extra="ignore"
     ) # Pydantic .env support
@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     @property
     def SQLALCHEMY_DATABASE_URI(self)->PostgresDsn:
         return MultiHostUrl.build(
-            scheme="postgresql+psycopg2",
+            scheme="postgresql+psycopg",
             username=self.DB_USER,
             password=self.DB_PASSWORD,
             host=self.DB_HOST,
@@ -51,6 +51,8 @@ class Settings(BaseSettings):
     # settings for tokens
     ACCESS_TOKEN_EXPIRE_MINUTES:int = 15 # change later
     REFRESH_TOKEN_EXPIRE_MINUTES:int = 60*24 # 1 day (change later)
+    
+    CRYPTCONTEXT_SCHEME="bcrypt"
     
     # ALGORITHM:str
     
