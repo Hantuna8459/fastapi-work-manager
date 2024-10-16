@@ -11,10 +11,7 @@ class UserResponse(BaseModel):
     class Config:
         form_atrributes = True
     
-class UserCreate(BaseModel):
-    password:str = Field(min_length=8, max_length=40)
-    
-class UserRegister(BaseModel):
+class UserRegisterRequest(UserResponse):
     email:EmailStr
     password: str = Field(min_length=8, max_length=40)
     password_confirm: str = Field(min_length=8, max_length=40)
