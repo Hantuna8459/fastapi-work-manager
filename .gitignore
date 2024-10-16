@@ -1,4 +1,4 @@
 .venv
-backend/app/.env
+.env
 *.pyc
 .idea
