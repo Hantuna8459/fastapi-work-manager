@@ -7,6 +7,7 @@ from fastapi import Depends, HTTPException, status, Request
 from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer
 
+from backend.app.crud.user import get_user
 from backend.app.models import User
 from .config import settings
 from .database import get_db
@@ -52,9 +53,6 @@ def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None):
     encode_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
     return encode_jwt
 
-# get user from database
-def get_user(db: Session, user_id: str):
-    return db.query(User).filter(User.id == user_id).first()
 
 # vertify user and information form token
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
