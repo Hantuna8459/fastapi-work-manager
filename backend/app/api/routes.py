@@ -4,5 +4,5 @@ from fastapi import APIRouter
 from . import register, email_test
 
 api_router = APIRouter()
-api_router.include_router(register.router, tags=["register"])
-api_router.include_router(email_test.router)
+api_router.include_router(register.router, tags=["registration"])
+api_router.include_router(email_test.router, tags=["email"])

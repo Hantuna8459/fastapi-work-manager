@@ -28,7 +28,7 @@ def register_user(*, user_in:UserRegisterRequest, session:Session = Depends(get_
         if user.username == user_in.username:
             raise UsernameDuplicateException()
         
-    if user_in.password_confirm != user_in.password:
+    if not user_in.password_confirm == user_in.password:
         raise UnmatchedPasswordException()
     
     new_user = UserRegisterRequest.model_validate(user_in)
