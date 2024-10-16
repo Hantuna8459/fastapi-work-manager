@@ -14,7 +14,12 @@ def user_create(*, session:Session, user_create:UserCreate)->User:
     session.refresh(user_data)
     return user_data
 
-def get_user_by_email(*, session:Session, email:str)->User|None:
-    statement = select(User).where(User.email == email)
-    session_user = session.execute(statement).scalar()
+def get_user_by_email_or_username(*, session:Session, email:str, username:str)->User|None:
+    """
+    retrieve both email and username
+    """
+    statement = select(User).where(
+            (User.email == email) & (User.username == username)
+        )
+    session_user = session.execute(statement).first()
     return session_user
