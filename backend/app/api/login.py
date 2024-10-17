@@ -9,16 +9,14 @@ from backend.app.core import auth
 from backend.app.core.config import settings
 from backend.app.core.database import get_db
 from backend.app.core import exception
-from backend.app.crud.user_crud import get_user_by_email_or_username
+from backend.app.crud import user_crud
 
 login_router = APIRouter()
 
 @login_router.post("/login")
 async def auth_login(user: OAuth2PasswordRequestForm = Depends(),
                      db=Depends(get_db)):
-    db_user = get_user_by_email_or_username(db, user.username)
-    if (not db_user) or (not auth.verify_password(user.password, db_user.password)):
-        raise exception.InvalidUser
+    user = user_crud.authenticate()
 
     token = auth.create_access_token({"id": user.id})
 
