@@ -54,6 +54,6 @@ class Settings(BaseSettings):
     
     CRYPTCONTEXT_SCHEME:str = "bcrypt"
     
-    # ALGORITHM:str
+    ALGORITHM:str = "HS256"
     
 settings = Settings()

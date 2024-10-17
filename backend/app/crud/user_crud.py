@@ -1,6 +1,6 @@
 from backend.app.models.User import User
 from backend.app.schema.user_schema import UserRegisterRequest
-from backend.app.core.auth import get_hashed_password
+from backend.app.core.password import get_hashed_password, verify_password
 from backend.app.core.database import get_db
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -38,7 +38,15 @@ def get_user_by_id(*, session:Session = Depends(get_db), id:uuid.UUID)->User|Non
     except SQLAlchemyError as e:
         session.rollback()
         return None
-
+    
+def authenticate(*, session:Session = Depends(get_db), email: str, username: str, password: str)->User|None:
+    db_user = get_user_by_email_or_username(session=session, email=email, username=username)
+    if not db_user:
+        return None
+    if not verify_password(password, db_user.password):
+        return None
+    return db_user
+    
 def register_request(*, session:Session = Depends(get_db), request:UserRegisterRequest)->User:
     new_user = User(
         email = request.email,
