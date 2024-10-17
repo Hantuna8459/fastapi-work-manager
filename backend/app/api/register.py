@@ -14,25 +14,26 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 @router.post("/signup", response_model=UserResponse)
-def register_user(*, user_in:UserRegisterRequest, session:Session = Depends(get_db))->Any:
+async def register_user(*, user_in:UserRegisterRequest, session:Session = Depends(get_db))->Any:
     
     # check if email or username already existed
-    user = user_crud.get_user_by_email_or_username(
+    existed_user = user_crud.get_user_by_email_or_username(
         session=session,
         email=user_in.email,
         username=user_in.username
         )
-    if user:
-        if user.email == user_in.email:
+    if existed_user:
+        if existed_user.email == user_in.email:
             raise EmailDuplicateException()
-        if user.username == user_in.username:
+        if existed_user.username == user_in.username:
             raise UsernameDuplicateException()
-        
+    
+    #TO DO: move validate out of endpoint 
     if not user_in.password_confirm == user_in.password:
         raise UnmatchedPasswordException()
     
-    new_user = UserRegisterRequest.model_validate(user_in)
-    user = user_crud.register_request(session=session, request=new_user)
+    user_data = UserRegisterRequest.model_validate(user_in)
+    new_user = user_crud.register_request(session=session, request=user_data)
     
     # send email
     email_data = generate_register_mail(email_to=user_in.email, username=user_in.username)
@@ -41,4 +42,4 @@ def register_user(*, user_in:UserRegisterRequest, session:Session = Depends(get_
         subject=email_data.subject,
         html_content=email_data.html_content,
     )
-    return user
+    return {"msg": "User registered successfully", "user": new_user}

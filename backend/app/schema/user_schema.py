@@ -20,6 +20,5 @@ class UserRegisterRequest(UserBase):
     password_confirm: str = Field(min_length=8, max_length=40)
     username: str
 
-# Properties to return via API, id is always required
 class UserResponse(UserBase):
-    id:uuid.UUID
+    id: uuid.UUID
