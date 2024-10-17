@@ -2,10 +2,13 @@ from typing import Any
 from pathlib import Path
 from .core.config import settings
 from jinja2 import Template
-
+import logging
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class EmailData:
     def __init__(self, html_content:str, subject:str) -> None:
@@ -28,11 +31,11 @@ def connect():
 
         # Log in to the SMTP server
         server.login(settings.MAIL_USER, settings.MAIL_PASSWORD)
-        print('Mail services initialized')
+        logger.info('Mail services initialized')
         return server
 
     except Exception as e:
-        print(f"Error connecting to SMTP server: {e}")
+        logger.exception(f"Error connecting to SMTP server: {e}")
         return None
 
 
@@ -51,9 +54,9 @@ def send_mail(*, email_to: str, subject:str="", html_content:str="")->None:
     
     try:
         server.send_message(msg)
-        print("Email sent successfully!")
+        logger.info("Email sent successfully!")
     except Exception as e:
-        print(f"Error sending email: {e}")
+        logger.exception(f"Error sending email: {e}")
     finally:
         server.quit()
         

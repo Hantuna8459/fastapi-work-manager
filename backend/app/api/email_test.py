@@ -18,6 +18,6 @@ def test_email(email_to:EmailStr)->str:
     )
     return "test email sent"
 
-@router.get("/health-check/")
-async def health_check() -> bool:
-    return True
+# @router.get("/health-check/")
+# async def health_check() -> bool:
+#     return True
