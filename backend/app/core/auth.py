@@ -32,27 +32,16 @@ def verify_password(password:str, user_password:str):
     return pwd_context.verify(password, user_password)
 
 # create access token
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes = ACCESS_TOKEN_EXPIRE_MINUTES)
+# nhận vào dict có id của user
+# trả về token đã đc mã hóa
+def create_access_token(payload: dict):
+    to_encode = payload.copy()
+    expire = (datetime.now(timezone.utc) +
+              timedelta(minutes = settings.ACCESS_TOKEN_EXPIRE_MINUTES))
+
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm = settings.ALGORITHM)
     return encoded_jwt
-
-# create refresh token
-def create_refresh_token(data: dict, expires_delta: Optional[timedelta] = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes = REFRESH_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encode_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
-    return encode_jwt
-
 
 # vertify user and information form token
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
@@ -68,33 +57,9 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     if user is None:
         raise credeentials_exception
     return user
+    
+async def get_current_active_user(current_user = Depends(get_current_user)):
+    if not current_user.is_active:
+        raise UserNotActiveException
 
-def get_old_refresh_token(request: Request):
-    refresh_token = request.cookies.get("refresh_token")
-    if refresh_token is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token missing")
-    else:
-        return refresh_token
-
-def make_new_access_token(request: Request, db = Depends(get_db)):
-    # claim refresh token
-    refresh_token = get_old_refresh_token(request)
-
-    try:
-        payload = jwt.decode(refresh_token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("id")
-        if user_id is None:
-            raise CredentialsException
-    except JWTError:
-        raise CredentialsException
-
-    # is user in DB
-    user = get_user(db, user_id = user_id)
-    if user is None:
-        raise CredentialsException
-
-    # make new access token
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(data={"id": user.id}, expires_delta=access_token_expires)
-
-    return {"access_token": access_token, "token_type": "bearer"}
+    return current_user
