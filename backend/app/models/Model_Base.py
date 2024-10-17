@@ -1,17 +1,7 @@
 from datetime import datetime
 import uuid
 from sqlalchemy import Column, UUID, DateTime
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
-
-@as_declarative()
-class Base:
-    __abstract__ = True
-    __name__: str
-
-    # (optional) auto generate table name
-    @declared_attr
-    def __tablename__(cls) -> str:
-        return cls.__name__.lower()
+from core.database import Base
     
 class BaseModel(Base):
     __abstract__ = True
