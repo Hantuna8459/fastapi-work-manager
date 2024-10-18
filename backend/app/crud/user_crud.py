@@ -16,36 +16,11 @@ def get_user_by_email_or_username(*, session:Session = Depends(get_db), email:st
     """
     retrieve both email and username
     """
-    try:
-        statement = select(User).where(
-                (User.email == email) | (User.username == username)
-            )
-        session_user = session.execute(statement).first()
-        return session_user
-    except SQLAlchemyError as e:
-        session.rollback()
-        logger.error(f"Database error occurred while querying user by email or username: {e}")
-        return None
-    except Exception as e:
-        logger.error(f"An unexpected error occurred: {e}")
-        return None
-
-def get_user_by_id(*, session:Session = Depends(get_db), id:uuid.UUID)->User|None:
-    try:
-        statement = select(User).where(User.id == id)
-        session_user = session.execute(statement).first()
-        return session_user
-    except SQLAlchemyError as e:
-        session.rollback()
-        return None
-    
-def authenticate(*, session:Session = Depends(get_db), email: str, username: str, password: str)->User|None:
-    db_user = get_user_by_email_or_username(session=session, email=email, username=username)
-    if not db_user:
-        return None
-    if not verify_password(password, db_user.password):
-        return None
-    return db_user
+    statement = select(User).where(
+            (User.email == email) | (User.username == username)
+        )
+    session_user = session.execute(statement).first()
+    return session_user
     
 def register_request(*, session:Session = Depends(get_db), request:UserRegisterRequest)->User:
     new_user = User(
