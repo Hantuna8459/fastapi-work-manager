@@ -13,7 +13,7 @@ delete_router = APIRouter()
 
 
 @delete_router.delete('/delete')
-async def add(user_category: UserCategorySchema = Depends(),
+async def add(user_category: UserCategorySchema,
                 user = Depends(get_current_user),
                  db=Depends(get_db)):
 

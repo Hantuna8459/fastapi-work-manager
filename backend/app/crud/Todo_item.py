@@ -76,14 +76,14 @@ async def create_todo_item(session,
                            todo_item: TodoItemCreateSchema | TodoItemBaseSchema,
                            user_id: UUID) \
         -> TodoItemDeepSchema:
-    if isinstance(todo_item, TodoItemBaseSchema):
+    if isinstance(todo_item, TodoItemCreateSchema):
         item = Todo_Item(name=todo_item.name, description=todo_item.description,
+                         category_id=todo_item.category_id,
                          created_by=user_id)
 
     else:
-        item = Todo_Item(name=todo_item.name,description=todo_item.description,
-                         category_id=todo_item.category_id,
-                         create_by=user_id)
+        item = Todo_Item(name=todo_item.name, description=todo_item.description,
+                         created_by=user_id)
 
     item = await execute_with_refresh(session, item)
     return item

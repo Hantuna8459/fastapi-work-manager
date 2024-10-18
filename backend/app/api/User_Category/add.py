@@ -13,13 +13,13 @@ add_router = APIRouter()
 
 
 @add_router.post('/add')
-async def add(user_category: UserCategorySchema = Depends(),
+async def add(user_category: UserCategorySchema,
                 user = Depends(get_current_user),
                  db=Depends(get_db)):
 
     try:
         if not await is_creator_of_category(db, user_category.category_id,
-                                            user.user_id):
+                                            user.id):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You don't have permission to access this category.",

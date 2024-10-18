@@ -10,7 +10,7 @@ class TodoItemBaseSchema(BaseModel):
 
 
 class TodoItemCreateSchema(TodoItemBaseSchema):
-    category_id: UUID | None = None
+    category_id: UUID | None
 
 
 class TodoItemSchema(TodoItemBaseSchema):

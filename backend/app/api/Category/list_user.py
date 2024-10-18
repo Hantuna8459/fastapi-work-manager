@@ -5,7 +5,6 @@ from uuid import UUID
 
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
-from backend.app.crud.Category import read_categories_by_user_id
 from backend.app.crud.User_Category import (
     is_user_join_category,read_list_user_id_by_category_id)
 
