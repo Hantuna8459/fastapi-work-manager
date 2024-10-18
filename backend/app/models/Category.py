@@ -12,5 +12,5 @@ class Category(BaseModel):
     description = Column("description", Text, nullable=False)
     created_by = Column("created_by", ForeignKey("user.id"), nullable=False)
 
-    todo_items = relationship("Todo_Item")
+    todo_items = relationship("Todo_Item", back_populates="category")
     users = relationship("UserCategory")

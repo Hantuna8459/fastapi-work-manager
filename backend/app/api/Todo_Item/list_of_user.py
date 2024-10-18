@@ -18,7 +18,6 @@ async def list_categories(
 ):
     try:
         todo_items = await read_todo_items(db, pagesize, page, user.id)
-        todo_items = {}
         if not todo_items:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,

@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 from pydantic import BaseModel
 
 from .Todo_item import TodoItemSchema
@@ -10,10 +11,9 @@ class CategoryCreateSchema(BaseModel):
 
 
 class CategorySchema(CategoryCreateSchema):
-    id: str
-    created_by: str
+    id: UUID
+    created_by: UUID
     updated_at: datetime
 
 class CategoryWithItemsSchema(CategorySchema):
     created_at: datetime
-    todo_items: list[TodoItemSchema]

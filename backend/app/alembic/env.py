@@ -5,6 +5,7 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 
 from backend.app.core.database import Base
+from backend.app.models import User, Todo_Item, Category, UserCategory
 
 from backend.app.core.config import settings
 

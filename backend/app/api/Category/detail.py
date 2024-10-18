@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Query, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+from uuid import UUID
 
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
@@ -13,7 +14,7 @@ detail_router = APIRouter()
 
 
 @detail_router.get('/{category_id}/detail', response_model=CategoryWithItemsSchema)
-async def detail(category_id: str,
+async def detail(category_id: UUID,
                  user = Depends(get_current_user),
                  db=Depends(get_db)):
 

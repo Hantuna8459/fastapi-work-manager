@@ -14,7 +14,7 @@ add_router = APIRouter()
 
 
 @add_router.post('/add')
-async def add(category: CategoryCreateSchema = Depends(),
+async def add(category: CategoryCreateSchema,
                 user = Depends(get_current_user),
                  db=Depends(get_db)):
 
@@ -24,10 +24,10 @@ async def add(category: CategoryCreateSchema = Depends(),
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Category is already used",
             )
-
-        category = await create_category(db, category, user.id)
-        user_category = await create_user_category(
-            db, UserCategorySchema(category_id=category.id,user_id=user.id)
+        user_id = user.id
+        category = await create_category(db, category, user_id)
+        await create_user_category(
+            db, UserCategorySchema(category_id=category.id,user_id=user_id)
         )
 
     except DatabaseExecutionException as e:

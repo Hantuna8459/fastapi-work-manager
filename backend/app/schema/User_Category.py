@@ -1,5 +1,6 @@
 from pydantic import BaseModel
+from uuid import UUID
 
 class UserCategorySchema(BaseModel):
-    user_id: str
-    category_id: str
+    user_id: UUID
+    category_id: UUID

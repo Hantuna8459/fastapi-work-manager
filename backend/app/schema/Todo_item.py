@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from pydantic import BaseModel
 
@@ -9,14 +10,14 @@ class TodoItemBaseSchema(BaseModel):
 
 
 class TodoItemCreateSchema(TodoItemBaseSchema):
-    category_id: str | None = None
+    category_id: UUID | None = None
 
 
 class TodoItemSchema(TodoItemBaseSchema):
-    id: str
+    id: UUID
     status: str
-    created_by: str
-    category_id: str | None = None
+    created_by: UUID
+    category_id: UUID | None = None
 
 
 class TodoItemDeepSchema(TodoItemSchema):

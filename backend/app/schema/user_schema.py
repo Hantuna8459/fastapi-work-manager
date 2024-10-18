@@ -17,8 +17,8 @@ class UserBase(BaseModel):
     
 class UserRegisterRequest(UserBase):
     email:EmailStr
-    password: str = Field(min_length=8, max_length=40)
-    password_confirm: str = Field(min_length=8, max_length=40)
+    password: str = Field(min_length=4, max_length=40)
+    password_confirm: str = Field(min_length=4, max_length=40)
     username: str
 
 

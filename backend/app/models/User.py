@@ -9,7 +9,7 @@ class User(BaseModel):
     __tablename__ = "user"
     
     username = Column("name", String(30), nullable=False, unique=True)
-    password = Column("password", String(50), nullable=False)
+    password = Column("password", String(100), nullable=False)
     email = Column("email", String(50), nullable=False, unique=True)
     first_name = Column("first_name", String(50), default=None, nullable=True)
     last_name = Column("last_name", String(50), default=None, nullable=True)

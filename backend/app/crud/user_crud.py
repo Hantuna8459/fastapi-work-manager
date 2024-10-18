@@ -1,3 +1,4 @@
+from uuid import UUID
 from backend.app.models.User import User
 from backend.app.schema.user_schema import UserRegisterRequest
 from backend.app.core.password import get_hashed_password
@@ -11,14 +12,18 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-async def read_user_by_user_id(session: AsyncSession, user_id: str):
+async def read_user_by_user_id(session: AsyncSession, user_id: UUID):
     try:
         query = select(User).where(User.id.__eq__(user_id))
         result = await session.execute(query)
         user = result.fetchone()
-        return user
     except SQLAlchemyError as e:
         raise DatabaseExecutionException(str(e))
+
+    if not user:
+        return None
+
+    return user[0]
 
 async def get_user_by_email_or_username(*, session: AsyncSession, email:str, username:str)\
         ->User | None:
@@ -31,9 +36,9 @@ async def get_user_by_email_or_username(*, session: AsyncSession, email:str, use
 
     session_user = await session.execute(statement)
     user = session_user.fetchone()
-    return user
+    return user[0]
     
-def register_request(*, session:AsyncSession, request:UserRegisterRequest)\
+async def register_request(*, session:AsyncSession, request:UserRegisterRequest)\
         ->User | None:
 
     new_user = User(
@@ -44,11 +49,11 @@ def register_request(*, session:AsyncSession, request:UserRegisterRequest)\
     )
     try:
         session.add(new_user)
-        session.commit()
-        session.refresh(new_user)
+        await session.commit()
+        await session.refresh(new_user)
         return new_user
     except SQLAlchemyError as e:
-        session.rollback()
+        await session.rollback()
         logger.error(f"SQLAlchemy error occurred: {e}")
         return None
     except Exception as e:

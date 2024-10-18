@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+from uuid import UUID
 
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
@@ -13,7 +14,7 @@ list_user_router = APIRouter()
 
 
 @list_user_router.get('/{category_id}/list_user')
-async def list_categories(category_id: str,
+async def list_categories(category_id: UUID,
         user = Depends(get_current_user),
         db = Depends(get_db)
 ):

@@ -1,3 +1,4 @@
+from uuid import UUID
 from sqlalchemy import func, delete
 from sqlalchemy.future import select
 
@@ -6,7 +7,7 @@ from ..schema.User_Category import UserCategorySchema
 from .core import *
 
 
-async def is_user_join_category(session, user_id: str, category_id: str)\
+async def is_user_join_category(session, user_id: UUID, category_id: UUID)\
         -> bool:
 
     query = (select(func.count(UserCategory.user_id))
@@ -16,8 +17,8 @@ async def is_user_join_category(session, user_id: str, category_id: str)\
     return result.scalar() > 0
 
 
-async def read_list_user_id_by_category_id(session, category_id: str)\
-        -> list[str]:
+async def read_list_user_id_by_category_id(session, category_id: UUID)\
+        -> list[UUID]:
 
     query = select(UserCategory.user_id).where(UserCategory.category_id.__eq__(category_id))
     result = await execute_with_select(session, query)
@@ -29,9 +30,10 @@ async def read_list_user_id_by_category_id(session, category_id: str)\
     return res
 
 
-async def read_list_category_id_by_user_id(session, user_id: str) \
-        -> list[str]:
-    query = select(UserCategory.user_id).where(UserCategory.user_id.__eq__(user_id))
+async def read_list_category_id_by_user_id(session, user_id: UUID) \
+        -> list[UUID]:
+
+    query = select(UserCategory.category_id).where(UserCategory.user_id.__eq__(user_id))
     result = await execute_with_select(session, query)
     lst = result.fetchall()
     res = []
