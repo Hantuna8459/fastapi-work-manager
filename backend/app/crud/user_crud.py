@@ -36,6 +36,9 @@ async def get_user_by_email_or_username(*, session: AsyncSession, email:str, use
 
     session_user = await session.execute(statement)
     user = session_user.fetchone()
+    if not user:
+        return None
+
     return user[0]
     
 async def register_request(*, session:AsyncSession, request:UserRegisterRequest)\

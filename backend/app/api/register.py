@@ -1,5 +1,7 @@
 from typing import Any
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from backend.app.utils import generate_register_mail, send_mail
 from backend.app.crud import user_crud
 from backend.app.schema.user_schema import UserRegisterRequest, UserResponse
@@ -26,13 +28,13 @@ async def register_user(*, user_in:UserRegisterRequest,
             )
         if existed_user:
             if existed_user.email == user_in.email:
-                raise EmailDuplicateException()
+                raise EmailDuplicateException
             if existed_user.username == user_in.username:
-                raise UsernameDuplicateException()
+                raise UsernameDuplicateException
 
         #TO DO: move validate out of endpoint
         if not user_in.password_confirm == user_in.password:
-            raise UnmatchedPasswordException()
+            raise UnmatchedPasswordException
 
         user_data = UserRegisterRequest.model_validate(user_in)
         new_user = await user_crud.register_request(session=session, request=user_data)
@@ -46,4 +48,4 @@ async def register_user(*, user_in:UserRegisterRequest,
         )
     except Exception as e:
         raise e
-    return {"msg": "User registered successfully", "user": new_user}
+    return JSONResponse(jsonable_encoder({"msg": "User registered successfully", "user": new_user}))
