@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime
 from pydantic import EmailStr, Field, BaseModel
 from typing import Optional
 
@@ -9,11 +8,9 @@ class UserBase(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     is_active: bool = True
-    last_login: Optional[datetime] = None
     
     class Config:
-        form_atrributes = True
-
+        from_attributes = True
     
 class UserRegisterRequest(UserBase):
     email:EmailStr
@@ -22,5 +19,5 @@ class UserRegisterRequest(UserBase):
     username: str
 
 
-class UserResponse(UserBase):
-    id: uuid.UUID
+# class UserResponse(UserBase):
+#     id: uuid.UUID

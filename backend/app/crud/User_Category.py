@@ -3,7 +3,7 @@ from sqlalchemy.future import select
 
 from backend.app.models import UserCategory
 from ..schema.User_Category import UserCategorySchema
-from .core import *
+from .Crud_Core import *
 
 
 async def is_user_join_category(session, user_id: str, category_id: str)\

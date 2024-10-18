@@ -3,7 +3,7 @@ from sqlalchemy.future import select
 
 from backend.app.models import Todo_Item
 from backend.app.schema.Todo_item import *
-from .core import *
+from .Crud_Core import *
 
 
 async def read_todo_items(session, pagesize: int, page: int,

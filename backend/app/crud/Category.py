@@ -4,7 +4,7 @@ from sqlalchemy.orm import selectinload
 
 from backend.app.models import Category
 from .User_Category import read_list_category_id_by_user_id
-from .core import *
+from .Crud_Core import *
 from ..schema.Category import *
 from ..schema.Todo_item import TodoItemSchema
 
