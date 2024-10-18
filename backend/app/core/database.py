@@ -16,7 +16,6 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with SessionLocal() as db:
         yield db
 
-
 class DatabaseExecutionException(Exception):
     def __init__(self, message: str):
         self.message = f"Error executing SQL: {message}"

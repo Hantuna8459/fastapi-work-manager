@@ -3,6 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from backend.app.core.database import get_db, DatabaseExecutionException
+from backend.app.core.auth import get_current_user
 from backend.app.crud.Category import is_creator_of_category
 from backend.app.crud.User_Category import create_user_category
 from backend.app.schema.User_Category import UserCategorySchema
@@ -13,16 +14,16 @@ add_router = APIRouter()
 
 @add_router.post('/add')
 async def add(user_category: UserCategorySchema = Depends(),
-                # user = Depends(get_current_user),
+                user = Depends(get_current_user),
                  db=Depends(get_db)):
 
     try:
-        # if not await is_creator_of_category(db, user_category.category_id,
-        #                                     user.user_id):
-        #     raise HTTPException(
-        #         status_code=status.HTTP_403_FORBIDDEN,
-        #         detail="You don't have permission to access this category.",
-        #     )
+        if not await is_creator_of_category(db, user_category.category_id,
+                                            user.user_id):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You don't have permission to access this category.",
+            )
 
         user_category = await create_user_category(db, user_category)
     except DatabaseExecutionException as e:
