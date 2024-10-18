@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     @property
     def SQLALCHEMY_DATABASE_URI(self)->PostgresDsn:
         return MultiHostUrl.build(
-            scheme="postgresql+psycopg2",
+            scheme="postgresql+psycopg",
             username=self.DB_USER,
             password=self.DB_PASSWORD,
             host=self.DB_HOST,
