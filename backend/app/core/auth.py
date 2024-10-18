@@ -8,7 +8,7 @@ from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import ValidationError
 
-from backend.app.crud.user_crud import (
+from backend.app.crud.User_Crud import (
     get_user_by_email_or_username, read_user_by_user_id)
 from backend.app.models import User
 from backend.app.schema.token_schema import TokenPayload
@@ -48,12 +48,12 @@ async def get_current_user(token: str = Depends(oauth2_scheme),
         )
         token_data = TokenPayload(**payload)# unpacks the dictionary payload into keyword arguments
     except(JWTError, ValidationError):
-        raise CredentialsException()
+        raise CredentialsException
     user = await read_user_by_user_id(session=session, user_id=token_data.sub)
     if not user:
-        raise CredentialsException()
+        raise CredentialsException
     if not user.is_active:
-        raise UserNotActiveException()
+        raise UserNotActiveException
     return user
 
 async def authenticate(*, identifier: str, password: str, session:AsyncSession = Depends(get_db))\

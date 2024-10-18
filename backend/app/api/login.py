@@ -20,9 +20,9 @@ async def login_with_token(form_data: OAuth2PasswordRequestForm = Depends(),
         session=session, identifier=form_data.username, password=form_data.password
     )
     if not user:
-        raise InvalidUser()
+        raise InvalidUser
     if not user.is_active:
-        raise UserNotActiveException()
+        raise UserNotActiveException
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return Token(
         access_token=auth.create_access_token(
