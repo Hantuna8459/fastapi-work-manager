@@ -30,16 +30,15 @@ async def get_user_by_email_or_username(*, session: AsyncSession, email:str, use
     """
     retrieve both email and username
     """
-    statement = (select(User)
-                 .where((User.email.__eq__(email))
-                        or (User.username.__eq__(username))))
-
+    statement = select(User).where(
+        (User.email == email) | (User.username == username)
+    )
     session_user = await session.execute(statement)
-    user = session_user.fetchone()
+    user = session_user.scalar_one_or_none()
     if not user:
         return None
 
-    return user[0]
+    return user
     
 async def register_request(*, session:AsyncSession, request:UserRegisterRequest)\
         ->User | None:

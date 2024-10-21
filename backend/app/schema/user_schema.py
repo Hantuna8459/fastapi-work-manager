@@ -4,12 +4,11 @@ from pydantic import EmailStr, Field, BaseModel
 from typing import Optional
 
 class UserBase(BaseModel):
-    email: EmailStr
-    username: str
+    email: Optional[EmailStr] = None
+    username: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
-    is_active: bool = True
-    last_login: Optional[datetime] = None
+    is_active: Optional[bool] = True
     
     class Config:
         form_atrributes = True

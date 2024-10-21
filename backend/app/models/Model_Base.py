@@ -9,4 +9,4 @@ class BaseModel(Base):
     
     id = Column("id", UUID, primary_key= True, index= True, default=uuid.uuid4)
     created_at = Column("created_at", DateTime, default=datetime.now())
-    updated_at = Column("updated_at", DateTime, default=datetime.now(), onupdate=datetime.now())
+    updated_at = Column("updated_at", DateTime, onupdate=datetime.now(), nullable=True)
