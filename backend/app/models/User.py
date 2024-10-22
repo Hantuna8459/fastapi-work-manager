@@ -1,4 +1,3 @@
-from datetime import datetime
 from sqlalchemy.schema import Column
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import String, DateTime, Boolean
@@ -10,11 +9,11 @@ class User(BaseModel):
     __tablename__ = "user"
     
     username = Column("name", String(30), nullable=False, unique=True)
-    password = Column("password", String(50), nullable=False)
+    password = Column("password", String(100), nullable=False)
     email = Column("email", String(50), nullable=False, unique=True)
     first_name = Column("first_name", String(50), default=None, nullable=True)
     last_name = Column("last_name", String(50), default=None, nullable=True)
-    last_login = Column("last_login", DateTime,default=datetime.now(), nullable=True)
+    last_login = Column("last_login", DateTime, nullable=True)
     is_active = Column("is_active", Boolean, default=True)
     
     todo_items = relationship("Todo_Item")
