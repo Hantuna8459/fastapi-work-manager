@@ -42,7 +42,7 @@ def connect():
 def send_mail(*, email_to: str, subject:str="", html_content:str="")->None:
     server = connect()
     if not server:
-        print("SMTP server is not connected. Cannot send email.")
+        logger.error("SMTP server is not connected. Cannot send email.")
         return
     
     msg = MIMEMultipart()
@@ -60,6 +60,27 @@ def send_mail(*, email_to: str, subject:str="", html_content:str="")->None:
     finally:
         server.quit()
         
+def send_mass_mail_background(*, email_to: str, subject:str="", html_content:str="")->None:
+    server = connect()
+    if not server:
+        logger.error("SMTP server is not connected. Cannot send email.")
+        return
+    
+    msg = MIMEMultipart()
+    msg["From"] = settings.EMAILS_FROM_EMAIL
+    msg["To"] = email_to
+    msg["Subject"] = subject
+    
+    msg.attach(MIMEText(html_content, "html"))
+    
+    try:
+        server.sendmail(settings.EMAILS_FROM_EMAIL, email_to, msg.as_string())
+        logger.info("Email sent successfully!")
+    except Exception as e:
+        logger.exception(f"Error sending email: {e}")
+    finally:
+        server.quit()
+        
 def generate_test_email(email_to: str)->EmailData:
     subject = "Test email"
     html_content = render_email_template(
@@ -68,8 +89,7 @@ def generate_test_email(email_to: str)->EmailData:
     )
     return EmailData(html_content=html_content, subject=subject)
 
-def generate_register_mail(email_to:str, username:str)->EmailData:
-    # project_name = settings.PROJECT_NAME
+def generate_register_mail(email_to:str, username:str)->EmailData:  
     subject = "registration successful"
     html_content = render_email_template(
         template_name='new_user_mail.html',
