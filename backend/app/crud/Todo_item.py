@@ -2,7 +2,7 @@ from uuid import UUID
 from sqlalchemy import func, delete, update
 from sqlalchemy.future import select
 
-from backend.app.models import Todo_Item
+from backend.app.models import Todo_Item, ItemStatus
 from backend.app.schema.Todo_item import *
 from .core import *
 
@@ -89,8 +89,52 @@ async def create_todo_item(session,
     return item
 
 
-async def delete_todo_item(session, todo_item_id: UUID)\
+async def delete_todo_item(session, todo_item_id: UUID) \
         -> None:
 
     query = delete(Todo_Item).where(Todo_Item.id.__eq__(todo_item_id))
     await execute_with_no_refresh(session, query)
+
+async def update_status_todo_item_by_id(session, todo_item_id: UUID, new_status: ItemStatus)\
+        -> TodoItemDeepSchema | None:
+    query = (update(Todo_Item)
+             .where(Todo_Item.id.__eq__(todo_item_id))
+             .values(status=new_status)
+             .returning(Todo_Item.id, Todo_Item.name, Todo_Item.description,
+                        Todo_Item.status, Todo_Item.created_by,
+                        Todo_Item.category_id, Todo_Item.created_at,
+                        Todo_Item.updated_at))
+    
+    result = await execute_with_select(session, query)
+    todo_item = result.fetchone()
+
+    if not todo_item:
+        return None
+    
+    return TodoItemDeepSchema(id=todo_item[0], name=todo_item[1], description=todo_item[2],
+                              status=todo_item[3], created_by=todo_item[4],
+                              category_id=todo_item[5], created_at=todo_item[6],
+                              updated_at=todo_item[7])
+
+async def update_todo_item_by_id(session, todo_item_id: UUID, update_data: dict) \
+        -> TodoItemDeepSchema | None:
+    query = (update(Todo_Item)
+             .where(Todo_Item.id.__eq__(todo_item_id))
+             .values(**update_data)
+             .returning(Todo_Item.id, Todo_Item.name, Todo_Item.description,
+                        Todo_Item.status, Todo_Item.created_by,
+                        Todo_Item.category_id, Todo_Item.created_at,
+                        Todo_Item.updated_at)
+    )
+    
+    result = await execute_with_select(session, query)
+    todo_item = result.fetchone()
+
+    if not todo_item:
+        return None
+    
+    return TodoItemDeepSchema(id=todo_item[0], name=todo_item[1], description=todo_item[2],
+                              status=todo_item[3], created_by=todo_item[4],
+                              category_id=todo_item[5], created_at=todo_item[6],
+                              updated_at=todo_item[7])
+

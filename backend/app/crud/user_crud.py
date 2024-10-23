@@ -2,7 +2,7 @@ from uuid import UUID
 from backend.app.models.User import User
 from backend.app.schema.user_schema import UserRegisterRequest
 from backend.app.core.password import get_hashed_password
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.core.database import DatabaseExecutionException
@@ -60,4 +60,30 @@ async def register_request(*, session:AsyncSession, request:UserRegisterRequest)
         return None
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
+        return None
+    
+async def update_user_by_user_id(session: AsyncSession, user_id: UUID, update_data: dict) -> User | None:
+    try:
+        stmt = (
+            update(User)
+            .where(User.id == user_id)
+            .values(**update_data)
+            .execution_options(synchronize_session = "fetch")
+        )
+        await session.execute(stmt)
+        await session.commit()
+
+        result = await session.execute(select(User).where(User.id == user_id))
+        updated_user = result.scalar_one_or_none() # chỉ nhận trả về một giá trị kết quả nếu có nhiều hơn 1 dòng kết quả sẽ trả về lỗi MultipleResultsFound sử lí trong except của SQLAlchemyError
+
+        return updated_user
+    
+    except SQLAlchemyError as e:
+        await session.rollback()
+        logger.error(f"SQLAlchemy error during update: {e}")
+        return None
+    
+    except Exception as e:
+        await session.rollback()
+        logger.error(f"Unexpected error during update: {e}")
         return None

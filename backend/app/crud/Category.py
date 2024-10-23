@@ -92,3 +92,23 @@ async def delete_category(session, category_id: UUID)\
 
     query = delete(Category).where(Category.id.__eq__(category_id))
     await execute_with_no_refresh(session, query)
+
+async def update_category_by_id(session, category_id: UUID, update_data: dict) \
+        -> CategoryWithItemsSchema | None:
+    query = (update(Category)
+             .where(Category.id.__eq__(category_id))
+             .values(**update_data)
+             .returning(Category.id, Category.name, Category.description,
+                        Category.created_by, Category.created_at,
+                        Category.updated_at)
+    )
+
+    result = await execute_with_select(session, query)
+    category = result.fetchone()
+
+    if not category:
+        return None
+    
+    return CategoryWithItemsSchema(id=category[0], name=category[1], description=category[2],
+                                   created_by=category[3], created_at=category[4],
+                                   updated_at=category[5])

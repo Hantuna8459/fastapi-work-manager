@@ -19,7 +19,7 @@ async def add(user_category: UserCategorySchema,
 
     try:
         if not await is_creator_of_category(db, user_category.category_id,
-                                            user.user_id):
+                                            user_category.user_id):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You don't have permission to access this category.",

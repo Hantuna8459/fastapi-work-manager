@@ -57,3 +57,23 @@ async def delete_user_category(session, user_category: UserCategorySchema):
                     UserCategory.category_id.__eq__(user_category.category_id)))
 
     await execute_with_no_refresh(session, query)
+
+async def update_user_category(session, user_category: UserCategorySchema, update_data: dict) \
+        -> UserCategorySchema:
+    
+    query = update(UserCategory).where(
+        UserCategory.user_id.__eq__(user_category.user_id) &
+        UserCategory.category_id.__eq__(user_category.category_id)
+    )
+
+    if "user_id" in update_data:
+        query = query.values(user_id=update_data["user_id"])
+    if "category_id" in update_data:
+        query = query.values(category_id=update_data["category_id"])
+
+    await execute_with_no_refresh(session, query)
+
+    updated_user_category = await session.get(UserCategory, (update_data.get("user_id", user_category.user_id),
+                                                             update_data.get("category_id", user_category.category_id)))
+    
+    return updated_user_category

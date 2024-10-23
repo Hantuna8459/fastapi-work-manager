@@ -13,7 +13,7 @@ class CategoryCreateSchema(BaseModel):
 class CategorySchema(CategoryCreateSchema):
     id: UUID
     created_by: UUID
-    updated_at: datetime
+    updated_at: datetime | None
 
 class CategoryWithItemsSchema(CategorySchema):
     created_at: datetime

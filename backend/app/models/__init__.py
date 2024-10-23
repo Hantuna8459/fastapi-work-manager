@@ -2,6 +2,6 @@
 
 from .Model_Base import Base
 from .Category import Category
-from .Todo_Item import Todo_Item
+from .Todo_Item import Todo_Item, ItemStatus
 from .User import User
 from .User_Category import UserCategory
