@@ -22,4 +22,4 @@ class TodoItemSchema(TodoItemBaseSchema):
 
 class TodoItemDeepSchema(TodoItemSchema):
     created_at: datetime
-    updated_at: datetime
+    updated_at: datetime | None

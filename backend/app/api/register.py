@@ -43,7 +43,7 @@ async def register_user(*, user_in:UserRegisterRequest,
     # send email
     if new_user:
         email_data = generate_register_mail(email_to=user_in.email, username=user_in.username)
-        send_mail(
+        await send_mail(
             email_to=user_in.email,
             subject=email_data.subject,
             html_content=email_data.html_content,

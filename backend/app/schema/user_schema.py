@@ -1,17 +1,16 @@
-import uuid
+from uuid import UUID
 from datetime import datetime
 from pydantic import EmailStr, Field, BaseModel
-from typing import Optional
 
 class UserBase(BaseModel):
-    email: Optional[EmailStr] = None
-    username: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    is_active: Optional[bool] = True
+    email: EmailStr
+    username: str
+    first_name: str|None = None
+    last_name: str|None = None
+    is_active: bool = True
     
     class Config:
-        form_atrributes = True
+        from_atrributes = True
 
     
 class UserRegisterRequest(UserBase):
@@ -22,4 +21,5 @@ class UserRegisterRequest(UserBase):
 
 
 class UserResponse(UserBase):
-    id: uuid.UUID
+    id: UUID
+    last_login: datetime|None
