@@ -2,6 +2,7 @@ from uuid import UUID
 from backend.app.models.User import User
 from backend.app.schema.user_schema import UserRegisterRequest
 from backend.app.core.password import get_hashed_password
+from backend.app.crud.core import execute_with_refresh
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,25 +17,25 @@ async def read_user_by_user_id(session: AsyncSession, user_id: UUID):
     try:
         query = select(User).where(User.id.__eq__(user_id))
         result = await session.execute(query)
-        user = result.fetchone()
+        user = result.scalar_one_or_none()
     except SQLAlchemyError as e:
         raise DatabaseExecutionException(str(e))
 
     if not user:
         return None
 
-    return user[0]
+    return user
 
 async def get_user_by_email_or_username(*, session: AsyncSession, email:str, username:str)\
         ->User | None:
     """
     retrieve both email and username
     """
-    statement = select(User).where(
+    query = select(User).where(
         (User.email == email) | (User.username == username)
     )
-    session_user = await session.execute(statement)
-    user = session_user.scalar_one_or_none()
+    result = await session.execute(query)
+    user = result.scalar_one_or_none()
     if not user:
         return None
 
@@ -49,15 +50,5 @@ async def register_request(*, session:AsyncSession, request:UserRegisterRequest)
         password = get_hashed_password(request.password),
         is_active=True,
     )
-    try:
-        session.add(new_user)
-        await session.commit()
-        await session.refresh(new_user)
-        return new_user
-    except SQLAlchemyError as e:
-        await session.rollback()
-        logger.error(f"SQLAlchemy error occurred: {e}")
-        return None
-    except Exception as e:
-        logger.error(f"An unexpected error occurred: {e}")
-        return None
+    user = await execute_with_refresh(session, new_user)
+    return user
