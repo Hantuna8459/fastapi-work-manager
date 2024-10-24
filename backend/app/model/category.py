@@ -14,5 +14,8 @@ class Category(BaseModel):
                         ForeignKey("user.id", ondelete="CASCADE", onupdate="CASCADE"),
                         nullable=False)
 
-    todo_items = relationship("TodoItem", back_populates="category")
-    user_ids = relationship("UserCategory", back_populates="category")
+    todo_items = relationship("TodoItem",
+                              back_populates="category", cascade="all, delete-orphan")
+
+    user_ids = relationship("UserCategory",
+                            back_populates="category", cascade="all, delete-orphan")
