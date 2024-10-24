@@ -7,10 +7,7 @@ from pydantic import BaseModel
 class TodoItemBaseSchema(BaseModel):
     name: str
     description: str
-
-
-class TodoItemCreateSchema(TodoItemBaseSchema):
-    category_id: UUID | None
+    category_id: UUID
 
 
 class TodoItemSchema(TodoItemBaseSchema):

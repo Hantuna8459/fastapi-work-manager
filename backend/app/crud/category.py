@@ -87,6 +87,17 @@ async def create_category(session, category: CategoryCreateSchema,
     return category
 
 
+async def update_category_by_id(session, category_id: UUID,
+                                update_data: CategoryCreateSchema) \
+        -> None:
+
+    query = (update(Category)
+             .where(Category.id.__eq__(category_id))
+             .values(**update_data.__dict__))
+
+    await execute_with_no_refresh(session, query)
+
+
 async def delete_category(session, category_id: UUID)\
         -> None:
 

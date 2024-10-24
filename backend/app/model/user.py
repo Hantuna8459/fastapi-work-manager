@@ -1,5 +1,4 @@
 from sqlalchemy.schema import Column
-from sqlalchemy.orm import relationship
 from sqlalchemy.types import String, DateTime, Boolean
 
 from .base_model import BaseModel

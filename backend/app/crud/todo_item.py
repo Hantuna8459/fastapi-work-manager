@@ -2,7 +2,8 @@ from uuid import UUID
 from sqlalchemy import func, delete, update
 from sqlalchemy.future import select
 
-from backend.app.model import Todo_Item
+from backend.app.model.todo_item import TodoItem, ItemStatus
+from backend.app.core.exception import TodoItemStatusDoneException
 from backend.app.schema.todo_item import *
 from .core import *
 
@@ -17,18 +18,18 @@ async def read_todo_items(session, pagesize: int, page: int,
 
     where_clause = None
     if (user_id != "") & (category_id != ""):
-        where_clause = ((Todo_Item.created_by.__eq__(user_id))
-                 &(Todo_Item.category_id.__eq__(category_id)))
+        where_clause = ((TodoItem.created_by.__eq__(user_id))
+                 &(TodoItem.category_id.__eq__(category_id)))
 
     elif (user_id != "") & (category_id == ""):
-        where_clause = (Todo_Item.created_by.__eq__(user_id))
+        where_clause = (TodoItem.created_by.__eq__(user_id))
 
     elif (user_id == "") & (category_id != ""):
-        where_clause = (Todo_Item.category_id.__eq__(category_id))
+        where_clause = (TodoItem.category_id.__eq__(category_id))
 
-    query = (select(Todo_Item.id, Todo_Item.name,
-                   Todo_Item.description, Todo_Item.status,
-                    Todo_Item.created_by, Todo_Item.category_id)
+    query = (select(TodoItem.id, TodoItem.name,
+                   TodoItem.description, TodoItem.status,
+                    TodoItem.created_by, TodoItem.category_id)
              .where(where_clause).limit(limit).offset(offset))
 
     result = await execute_with_select(session, query)
@@ -47,11 +48,11 @@ async def read_todo_items(session, pagesize: int, page: int,
 async def read_todo_item_by_id(session, todo_item_id: UUID) \
         -> TodoItemDeepSchema | None:
 
-    query = (select(Todo_Item.id, Todo_Item.name,
-                    Todo_Item.description, Todo_Item.status,
-                    Todo_Item.created_by, Todo_Item.category_id,
-                    Todo_Item.created_at, Todo_Item.updated_at)
-             .where(Todo_Item.id.__eq__(todo_item_id)))
+    query = (select(TodoItem.id, TodoItem.name,
+                    TodoItem.description, TodoItem.status,
+                    TodoItem.created_by, TodoItem.category_id,
+                    TodoItem.created_at, TodoItem.updated_at)
+             .where(TodoItem.id.__eq__(todo_item_id)))
 
     result = await execute_with_select(session, query)
     todo_item = result.fetchone()
@@ -67,30 +68,62 @@ async def read_todo_item_by_id(session, todo_item_id: UUID) \
 async def is_todo_item_exist(session, todo_item_id: UUID) \
         -> bool:
 
-    query = select(func.count(Todo_Item.id)).where(Todo_Item.id.__eq__(todo_item_id))
+    query = select(func.count(TodoItem.id)).where(TodoItem.id.__eq__(todo_item_id))
+    result = await execute_with_select(session, query)
+    return result.scalar() > 0
+
+
+async def is_creator_of_todo_item(session, todo_item_id: UUID, user_id: UUID):
+    query = (select(func.count(TodoItem.id))
+             .where((TodoItem.id.__eq__(todo_item_id))
+                    &(TodoItem.created_by.__eq__(user_id))))
     result = await execute_with_select(session, query)
     return result.scalar() > 0
 
 
 async def create_todo_item(session,
-                           todo_item: TodoItemCreateSchema | TodoItemBaseSchema,
+                           todo_item: TodoItemBaseSchema,
                            user_id: UUID) \
         -> TodoItemDeepSchema:
-    if isinstance(todo_item, TodoItemCreateSchema):
-        item = Todo_Item(name=todo_item.name, description=todo_item.description,
-                         category_id=todo_item.category_id,
-                         created_by=user_id)
 
-    else:
-        item = Todo_Item(name=todo_item.name, description=todo_item.description,
-                         created_by=user_id)
+    item = TodoItem(name=todo_item.name, description=todo_item.description,
+                    category_id=todo_item.category_id,created_by=user_id)
 
     item = await execute_with_refresh(session, item)
     return item
 
 
+async def update_todo_item_status_by_id(session, todo_item_id: UUID,)\
+        -> None:
+
+    todo_item = await read_todo_item_by_id(session, todo_item_id)
+    if todo_item.status == ItemStatus.Todo:
+        new_status = ItemStatus.Processing
+    elif todo_item.status == ItemStatus.Processing:
+        new_status = ItemStatus.Done
+    else:
+        raise TodoItemStatusDoneException
+
+    query = (update(TodoItem)
+             .where(TodoItem.id.__eq__(todo_item_id))
+             .values(status=new_status))
+
+    await execute_with_no_refresh(session, query)
+
+
+async def update_todo_item_by_id(session, todo_item_id: UUID,
+                                 update_data: TodoItemBaseSchema) \
+        -> None:
+
+    query = (update(TodoItem)
+             .where(TodoItem.id.__eq__(todo_item_id))
+             .values(**update_data.__dict__))
+
+    await execute_with_no_refresh(session, query)
+
+
 async def delete_todo_item(session, todo_item_id: UUID)\
         -> None:
 
-    query = delete(Todo_Item).where(Todo_Item.id.__eq__(todo_item_id))
+    query = delete(TodoItem).where(TodoItem.id.__eq__(todo_item_id))
     await execute_with_no_refresh(session, query)
