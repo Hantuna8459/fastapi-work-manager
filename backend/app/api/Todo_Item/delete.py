@@ -5,12 +5,13 @@ from uuid import UUID
 
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
-from backend.app.crud.Todo_item import read_todo_item_by_id, delete_todo_item
+from backend.app.core.exception import TodoItemNotFound, NotCreatorOfTodoItem
+from backend.app.crud.todo_item import read_todo_item_by_id, delete_todo_item
 
 delete_router = APIRouter()
 
 
-@delete_router.delete('/{todo_item_id}/delete')
+@delete_router.delete('/{todo_item_id}/delete', response_model=dict)
 async def add(todo_item_id: UUID,
                 user = Depends(get_current_user),
                  db=Depends(get_db)):
@@ -18,16 +19,10 @@ async def add(todo_item_id: UUID,
     try:
         todo_item = await read_todo_item_by_id(db, todo_item_id)
         if not todo_item:
-            raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Todo item not found.",
-                )
+            raise TodoItemNotFound
 
         if todo_item.created_by != user.id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You don't have permission to access this todo item."
-            )
+            raise NotCreatorOfTodoItem
 
         await delete_todo_item(db, todo_item_id)
     except DatabaseExecutionException as e:

@@ -3,11 +3,11 @@ from sqlalchemy import func, delete, update
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
-from backend.app.models import Category
-from .User_Category import read_list_category_id_by_user_id
+from backend.app.model import Category
+from .user_category import read_list_category_id_by_user_id
 from .core import *
-from ..schema.Category import *
-from ..schema.Todo_item import TodoItemSchema
+from ..schema.category import *
+from ..schema.todo_item import TodoItemSchema
 
 
 async def read_categories_by_user_id(session, user_id: UUID) \

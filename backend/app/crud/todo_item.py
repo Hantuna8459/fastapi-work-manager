@@ -2,8 +2,8 @@ from uuid import UUID
 from sqlalchemy import func, delete, update
 from sqlalchemy.future import select
 
-from backend.app.models import Todo_Item
-from backend.app.schema.Todo_item import *
+from backend.app.model import Todo_Item
+from backend.app.schema.todo_item import *
 from .core import *
 
 

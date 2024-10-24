@@ -39,3 +39,38 @@ UserNotActiveException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
     detail="User does not active"
 )
+
+CategoryNameAlreadyUsed = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="Category name is already used",
+)
+
+NotCreatorOfCategory = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail="You are not creator of this category",
+)
+
+CantAccessCategory = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail="You don't have permission to access this category",
+)
+
+CategoryNotFound = HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND,
+    detail="Category not found",
+)
+
+TodoItemNotFound = HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND,
+    detail="Todo item not found.",
+)
+
+CantAccessTodoItem = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail="You don't have permission to access this todo item."
+)
+
+NotCreatorOfTodoItem = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail="You are not creator of this todo item."
+)

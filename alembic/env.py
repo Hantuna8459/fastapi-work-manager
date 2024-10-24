@@ -1,12 +1,12 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import engine_from_config
+from sqlalchemy import pool
 
 from alembic import context
 
 from backend.app.core.database import Base
-from backend.app.models import User, Todo_Item, Category, UserCategory
-
+from backend.app.model import User, Category, TodoItem, UserCategory
 from backend.app.core.config import settings
 
 # this is the Alembic Config object, which provides
@@ -24,14 +24,16 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
 def get_url():
     return str(settings.SQLALCHEMY_DATABASE_URI)
 
 config.set_main_option("sqlalchemy.url", get_url())
+
+# other values from the config, defined by the needs of env.py,
+# can be acquired:
+# my_important_option = config.get_main_option("my_important_option")
+# ... etc.
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -45,7 +47,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = get_url()
+    url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -64,8 +66,6 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    # configuration = config.get_section(config.config_ini_section)
-    # configuration["sqlalchemy.url"] = get_url()
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

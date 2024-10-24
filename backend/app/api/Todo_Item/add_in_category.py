@@ -4,9 +4,10 @@ from fastapi.responses import JSONResponse
 
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
-from backend.app.crud.Category import is_category_id_exist
-from backend.app.crud.Todo_item import create_todo_item
-from backend.app.schema.Todo_item import TodoItemCreateSchema, TodoItemDeepSchema
+from backend.app.core.exception import CategoryNotFound
+from backend.app.crud.category import is_category_id_exist
+from backend.app.crud.todo_item import create_todo_item
+from backend.app.schema.todo_item import TodoItemCreateSchema, TodoItemDeepSchema
 
 
 add_in_category_router = APIRouter()
@@ -19,10 +20,7 @@ async def add(todo_item: TodoItemCreateSchema,
 
     try:
         if not await is_category_id_exist(db, todo_item.category_id):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Category is not exist",
-            )
+            raise CategoryNotFound
 
         todo_item = await create_todo_item(db, todo_item, user.id)
 

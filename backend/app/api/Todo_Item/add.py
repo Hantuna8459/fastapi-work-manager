@@ -4,9 +4,8 @@ from fastapi.responses import JSONResponse
 
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
-from backend.app.crud.Category import is_category_id_exist
-from backend.app.crud.Todo_item import create_todo_item
-from backend.app.schema.Todo_item import TodoItemCreateSchema, TodoItemDeepSchema, TodoItemBaseSchema
+from backend.app.crud.todo_item import create_todo_item
+from backend.app.schema.todo_item import TodoItemDeepSchema, TodoItemBaseSchema
 
 add_router = APIRouter()
 

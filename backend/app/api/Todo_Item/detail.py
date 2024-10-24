@@ -5,9 +5,10 @@ from uuid import UUID
 
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
-from backend.app.crud.User_Category import is_user_join_category
-from backend.app.crud.Todo_item import read_todo_item_by_id
-from backend.app.schema.Todo_item import TodoItemDeepSchema
+from backend.app.core.exception import TodoItemNotFound, CantAccessTodoItem
+from backend.app.crud.user_category import is_user_join_category
+from backend.app.crud.todo_item import read_todo_item_by_id
+from backend.app.schema.todo_item import TodoItemDeepSchema
 
 
 detail_router = APIRouter()
@@ -22,22 +23,14 @@ async def detail(todo_item_id: UUID,
 
         todo_item = await read_todo_item_by_id(db, todo_item_id)
         if not todo_item:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Todo item not found",
-            )
-
-        CantAcessException = HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="You don't have permission to access this todo item",
-                )
+            raise TodoItemNotFound
 
         if todo_item.category_id:
             if not await is_user_join_category(db, user.id, todo_item.category_id):
-                raise CantAcessException
+                raise CantAccessTodoItem
 
         if todo_item.created_by != user.id:
-            raise CantAcessException
+            raise CantAccessTodoItem
 
     except DatabaseExecutionException as e:
         raise HTTPException(

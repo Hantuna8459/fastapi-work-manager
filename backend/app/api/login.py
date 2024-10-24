@@ -2,7 +2,7 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from backend.app.schema.token_schema import Token
+from backend.app.schema.token import Token
 from backend.app.core import auth
 from backend.app.core.config import settings
 from backend.app.core.database import get_db
@@ -13,7 +13,7 @@ from backend.app.core.exception import (
 
 router = APIRouter()
 
-@router.post("/login")
+@router.post("/login", response_model=Token,)
 async def login_with_token(form_data: OAuth2PasswordRequestForm = Depends(),
                            session=Depends(get_db)):
     user = await auth.authenticate(
