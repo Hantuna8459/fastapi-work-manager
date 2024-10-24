@@ -82,7 +82,7 @@ async def is_creator_of_todo_item(session, todo_item_id: UUID, user_id: UUID):
 
 
 async def create_todo_item(session,
-                           todo_item: TodoItemBaseSchema,
+                           todo_item: TodoItemWithCategorySchema,
                            user_id: UUID) \
         -> TodoItemDeepSchema:
 
@@ -97,9 +97,9 @@ async def update_todo_item_status_by_id(session, todo_item_id: UUID,)\
         -> None:
 
     todo_item = await read_todo_item_by_id(session, todo_item_id)
-    if todo_item.status == ItemStatus.Todo:
+    if todo_item.status == ItemStatus.Todo.value:
         new_status = ItemStatus.Processing
-    elif todo_item.status == ItemStatus.Processing:
+    elif todo_item.status == ItemStatus.Processing.value:
         new_status = ItemStatus.Done
     else:
         raise TodoItemStatusDoneException

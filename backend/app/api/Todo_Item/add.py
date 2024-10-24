@@ -7,14 +7,13 @@ from backend.app.core.auth import get_current_user
 from backend.app.core.exception import CategoryNotFound
 from backend.app.crud.category import is_category_id_exist
 from backend.app.crud.todo_item import create_todo_item
-from backend.app.schema.todo_item import TodoItemBaseSchema, TodoItemDeepSchema
-
+from backend.app.schema.todo_item import TodoItemBaseSchema, TodoItemDeepSchema, TodoItemWithCategorySchema
 
 add_router = APIRouter()
 
 
 @add_router.post('/add', response_model=TodoItemDeepSchema)
-async def add(todo_item: TodoItemBaseSchema,
+async def add(todo_item: TodoItemWithCategorySchema,
                 user = Depends(get_current_user),
                  db=Depends(get_db)):
 

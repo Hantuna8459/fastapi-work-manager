@@ -12,7 +12,7 @@ from backend.app.crud.todo_item import (is_creator_of_todo_item,
 update_status_router = APIRouter()
 
 
-@update_status_router.get('/{todo_item_id}/update_status', response_model=dict)
+@update_status_router.post('/{todo_item_id}/update_status', response_model=dict)
 async def detail(todo_item_id: UUID,
                  user=Depends(get_current_user),
                  db=Depends(get_db)):

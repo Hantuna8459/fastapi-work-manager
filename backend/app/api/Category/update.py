@@ -14,7 +14,7 @@ from backend.app.schema.category import CategoryCreateSchema
 update_router = APIRouter()
 
 
-@update_router.get('/{category_id}/update', response_model=dict)
+@update_router.post('/{category_id}/update', response_model=dict)
 async def detail(category_id: UUID,
                  category: CategoryCreateSchema,
                  user = Depends(get_current_user),

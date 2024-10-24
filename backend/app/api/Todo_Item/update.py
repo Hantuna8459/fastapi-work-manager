@@ -13,7 +13,7 @@ from backend.app.schema.todo_item import TodoItemBaseSchema
 update_router = APIRouter()
 
 
-@update_router.get('/{todo_item_id}/update', response_model=dict)
+@update_router.post('/{todo_item_id}/update', response_model=dict)
 async def detail(todo_item_id: UUID,
                  todo_item: TodoItemBaseSchema,
                  user = Depends(get_current_user),
