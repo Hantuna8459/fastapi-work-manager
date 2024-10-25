@@ -14,11 +14,12 @@ list_router = APIRouter()
 
 @list_router.get('/list', response_model=list[CategorySchema])
 async def list_categories(
+        pagesize: int = 5, page: int = 1,
         user = Depends(get_current_user),
         db = Depends(get_db)
 ):
     try:
-        categories = await read_categories_by_user_id(db, user.id)
+        categories = await read_categories_by_user_id(db, user.id, pagesize, page)
 
         if not categories:
             raise CategoryNotFound

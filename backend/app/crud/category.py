@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from uuid import UUID
 from sqlalchemy import func, delete, update
 from sqlalchemy.future import select
@@ -8,13 +9,15 @@ from .core import *
 from ..schema.category import *
 
 
-async def read_categories_by_user_id(session, user_id: UUID) \
+async def read_categories_by_user_id(session, user_id: UUID, pagesize: int, page: int) \
         -> list[CategorySchema] | None:
 
+    limit = pagesize
+    offset = (page - 1) * pagesize
     lst = await read_list_category_id_by_user_id(session, user_id)
     query = (select(Category.id, Category.name, Category.description,
                     Category.created_by, Category.updated_at)
-             .where(Category.id.in_(lst)))
+             .where(Category.id.in_(lst)).limit(limit).offset(offset))
 
     result = await execute_with_select(session, query)
     categories = result.fetchall()
@@ -91,7 +94,7 @@ async def update_category_by_id(session, category_id: UUID,
 
     query = (update(Category)
              .where(Category.id.__eq__(category_id))
-             .values(**update_data.__dict__))
+             .values(**update_data.__dict__,updated_at=datetime.now(timezone.utc)))
 
     await execute_with_no_refresh(session, query)
 

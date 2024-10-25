@@ -9,7 +9,6 @@ class UserBase(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     is_active: bool = True
-    last_login: Optional[datetime] = None
     
     class Config:
         form_atrributes = True
@@ -24,3 +23,4 @@ class UserRegisterRequest(UserBase):
 
 class UserResponse(UserBase):
     id: uuid.UUID
+    last_login: Optional[datetime] = None

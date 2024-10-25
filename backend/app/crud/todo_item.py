@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from uuid import UUID
 from sqlalchemy import func, delete, update
 from sqlalchemy.future import select
@@ -106,7 +107,7 @@ async def update_todo_item_status_by_id(session, todo_item_id: UUID,)\
 
     query = (update(TodoItem)
              .where(TodoItem.id.__eq__(todo_item_id))
-             .values(status=new_status))
+             .values(status=new_status, updated_at=datetime.now(timezone.utc)))
 
     await execute_with_no_refresh(session, query)
 
@@ -117,7 +118,7 @@ async def update_todo_item_by_id(session, todo_item_id: UUID,
 
     query = (update(TodoItem)
              .where(TodoItem.id.__eq__(todo_item_id))
-             .values(**update_data.__dict__))
+             .values(**update_data.__dict__, updated_at=datetime.now(timezone.utc)))
 
     await execute_with_no_refresh(session, query)
 
