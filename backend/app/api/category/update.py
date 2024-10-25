@@ -1,13 +1,13 @@
-from fastapi import APIRouter, Depends, Query, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from uuid import UUID
 
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
-from backend.app.core.exception import NotCreatorOfCategory, CategoryNotFound
+from backend.app.core.exception import NotCreatorOfCategory
 from backend.app.crud.category import is_creator_of_category
-from backend.app.crud.category import is_category_id_exist, update_category_by_id
+from backend.app.crud.category import update_category_by_id
 from backend.app.schema.category import CategoryCreateSchema
 
 

@@ -7,7 +7,7 @@ from backend.app.core.auth import get_current_user
 from backend.app.core.exception import CategoryNotFound
 from backend.app.crud.category import is_category_id_exist
 from backend.app.crud.todo_item import create_todo_item
-from backend.app.schema.todo_item import TodoItemBaseSchema, TodoItemDeepSchema, TodoItemWithCategorySchema
+from backend.app.schema.todo_item import TodoItemDeepSchema, TodoItemWithCategorySchema
 
 add_router = APIRouter()
 
