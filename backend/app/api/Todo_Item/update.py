@@ -5,26 +5,27 @@ from uuid import UUID
 
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
-from backend.app.core.exception import TodoItemNotFound, NotCreatorOfTodoItem
-from backend.app.crud.todo_item import read_todo_item_by_id, delete_todo_item
+from backend.app.core.exception import NotCreatorOfTodoItem
+from backend.app.crud.todo_item import is_creator_of_todo_item, update_todo_item_by_id
+from backend.app.schema.todo_item import TodoItemBaseSchema
 
-delete_router = APIRouter()
+
+update_router = APIRouter()
 
 
-@delete_router.delete('/{todo_item_id}/delete', response_model=dict)
-async def add(todo_item_id: UUID,
-                user = Depends(get_current_user),
+@update_router.post('/{todo_item_id}/update', response_model=dict)
+async def detail(todo_item_id: UUID,
+                 todo_item: TodoItemBaseSchema,
+                 user = Depends(get_current_user),
                  db=Depends(get_db)):
 
     try:
-        todo_item = await read_todo_item_by_id(db, todo_item_id)
-        if not todo_item:
-            raise TodoItemNotFound
 
-        if todo_item.created_by != user.id:
+        if not await is_creator_of_todo_item(db, todo_item_id, user.id):
             raise NotCreatorOfTodoItem
 
-        await delete_todo_item(db, todo_item_id)
+        await update_todo_item_by_id(db, todo_item_id, todo_item)
+
     except DatabaseExecutionException as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

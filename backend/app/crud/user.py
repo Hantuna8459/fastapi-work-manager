@@ -1,6 +1,6 @@
 from uuid import UUID
-from backend.app.models.User import User
-from backend.app.schema.user_schema import UserRegisterRequest
+from backend.app.models.user import User
+from backend.app.schema.user import UserRegisterRequest
 from backend.app.core.password import get_hashed_password
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -30,15 +30,16 @@ async def get_user_by_email_or_username(*, session: AsyncSession, email:str, use
     """
     retrieve both email and username
     """
-    statement = select(User).where(
-        (User.email == email) | (User.username == username)
-    )
+    statement = (select(User)
+                 .where((User.email.__eq__(email))
+                        or (User.username.__eq__(username))))
+
     session_user = await session.execute(statement)
-    user = session_user.scalar_one_or_none()
+    user = session_user.fetchone()
     if not user:
         return None
 
-    return user
+    return user[0]
     
 async def register_request(*, session:AsyncSession, request:UserRegisterRequest)\
         ->User | None:

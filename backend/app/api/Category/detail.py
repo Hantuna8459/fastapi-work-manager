@@ -5,9 +5,10 @@ from uuid import UUID
 
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
-from backend.app.crud.User_Category import is_user_join_category
-from backend.app.crud.Category import read_category_by_id
-from backend.app.schema.Category import CategoryWithItemsSchema
+from backend.app.core.exception import CantAccessCategory, CategoryNotFound
+from backend.app.crud.user_category import is_user_join_category
+from backend.app.crud.category import read_category_by_id
+from backend.app.schema.category import CategoryWithItemsSchema
 
 
 detail_router = APIRouter()
@@ -20,17 +21,12 @@ async def detail(category_id: UUID,
 
     try:
         if not await is_user_join_category(db, user.id, category_id):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You don't have permission to access this category",
-            )
+            raise CantAccessCategory
 
         category = await read_category_by_id(db, category_id)
         if not category:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Category not found",
-            )
+            raise CategoryNotFound
+
     except DatabaseExecutionException as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

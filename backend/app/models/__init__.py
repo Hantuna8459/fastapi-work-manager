@@ -1,7 +1,7 @@
 # we need this so alembic can work
 
-from .Model_Base import Base
-from .Category import Category
-from .Todo_Item import Todo_Item
-from .User import User
-from .User_Category import UserCategory
+from .base_model import Base
+from .category import Category
+from .todo_item import TodoItem
+from .user import User
+from .user_category import UserCategory

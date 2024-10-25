@@ -5,4 +5,4 @@ class Token(BaseModel):
     token_type: str = 'bearer'
 
 class TokenPayload(BaseModel):
-    sub:str|None=None
+    sub: str | None = None
