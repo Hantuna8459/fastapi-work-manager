@@ -22,6 +22,6 @@ class TodoItem(BaseModel):
 
     category_id = Column("category_id",
                          ForeignKey("category.id", ondelete="CASCADE", onupdate="CASCADE"),
-                         nullable=True)
+                         nullable=False)
 
     category = relationship("Category", back_populates="todo_items")

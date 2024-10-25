@@ -74,3 +74,8 @@ NotCreatorOfTodoItem = HTTPException(
     status_code=status.HTTP_403_FORBIDDEN,
     detail="You are not creator of this todo item."
 )
+
+class TodoItemStatusDoneException(Exception):
+    def __init__(self):
+        self.message = "Todo Item is Done!"
+        super().__init__(self.message)

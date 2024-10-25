@@ -9,15 +9,15 @@ class TodoItemBaseSchema(BaseModel):
     description: str
 
 
-class TodoItemCreateSchema(TodoItemBaseSchema):
-    category_id: UUID | None
+class TodoItemWithCategorySchema(TodoItemBaseSchema):
+    category_id: UUID
 
 
 class TodoItemSchema(TodoItemBaseSchema):
     id: UUID
     status: str
+    category_id: UUID
     created_by: UUID
-    category_id: UUID | None = None
 
 
 class TodoItemDeepSchema(TodoItemSchema):

@@ -45,7 +45,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme),
 
     try:
         payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=settings.ALGORITHM
+            token, settings.SECRET_KEY, algorithms=settings.ALGORITHM,
         )
         token_data = TokenPayload(**payload)# unpacks the dictionary payload into keyword arguments
     except(JWTError, ValidationError):
