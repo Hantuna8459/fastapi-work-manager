@@ -13,7 +13,7 @@ from backend.app.schema.todo_item import TodoItemSchema
 list_of_category_router = APIRouter()
 
 
-@list_of_category_router.get('{category_id}/list_todo_item',
+@list_of_category_router.get('/{category_id}/list_todo_item',
                          response_model=list[TodoItemSchema])
 
 async def list_categories(
@@ -27,7 +27,7 @@ async def list_categories(
         if not await is_user_join_category(db, user.id, category_id):
             raise CantAccessCategory
 
-        todo_items = await read_todo_items(db, pagesize, page, category_id)
+        todo_items = await read_todo_items(db, pagesize, page, None, category_id)
         if not todo_items:
             raise TodoItemNotFound
 

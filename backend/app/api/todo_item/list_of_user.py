@@ -19,7 +19,7 @@ async def list_categories(
         db = Depends(get_db)
 ):
     try:
-        todo_items = await read_todo_items(db, pagesize, page, user.id)
+        todo_items = await read_todo_items(db, pagesize, page, user.id, None)
         if not todo_items:
             raise TodoItemNotFound
 

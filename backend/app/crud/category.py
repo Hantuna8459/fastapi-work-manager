@@ -82,7 +82,7 @@ async def create_category(session, category: CategoryCreateSchema,
                         description=category.description,created_by=user_id)
 
     category = await execute_with_refresh(session, category)
-    return category
+    return CategorySchema(**category.__dict__)
 
 
 async def update_category_by_id(session, category_id: UUID,

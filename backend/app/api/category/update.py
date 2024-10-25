@@ -21,7 +21,7 @@ async def detail(category_id: UUID,
                  db=Depends(get_db)):
 
     try:
-        if not await is_creator_of_category(db, user.id, category_id):
+        if not await is_creator_of_category(db, category_id, user.id):
             raise NotCreatorOfCategory
 
         await update_category_by_id(db, category_id, category)

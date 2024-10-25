@@ -24,8 +24,9 @@ async def add(category: CategoryCreateSchema,
             raise CategoryNameAlreadyUsed
         user_id = user.id
         category = await create_category(db, category, user_id)
+        temp_category = category
         await create_user_category(
-            db, UserCategorySchema(category_id=category.id,user_id=user_id)
+            db, UserCategorySchema(category_id=temp_category.id,user_id=user_id)
         )
 
     except DatabaseExecutionException as e:
@@ -34,4 +35,4 @@ async def add(category: CategoryCreateSchema,
             detail=str(e),
         )
 
-    return JSONResponse(jsonable_encoder(category))
+    return JSONResponse(jsonable_encoder(temp_category))

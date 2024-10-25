@@ -9,22 +9,22 @@ from .core import *
 
 
 async def read_todo_items(session, pagesize: int, page: int,
-                         user_id: UUID = "",
-                         category_id: UUID = "") \
+                         user_id: UUID | None = None,
+                         category_id: UUID | None = None) \
         -> list[TodoItemSchema] | None:
 
     limit = pagesize
     offset = (page - 1) * pagesize
 
     where_clause = None
-    if (user_id != "") & (category_id != ""):
+    if (user_id is not None) & (category_id is not None):
         where_clause = ((TodoItem.created_by.__eq__(user_id))
                  &(TodoItem.category_id.__eq__(category_id)))
 
-    elif (user_id != "") & (category_id == ""):
+    elif (user_id is not None) & (category_id is None):
         where_clause = (TodoItem.created_by.__eq__(user_id))
 
-    elif (user_id == "") & (category_id != ""):
+    elif (user_id is None) & (category_id is None):
         where_clause = (TodoItem.category_id.__eq__(category_id))
 
     query = (select(TodoItem.id, TodoItem.name,
