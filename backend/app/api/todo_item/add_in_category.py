@@ -21,7 +21,7 @@ async def add(todo_item: TodoItemCreateSchema,
         if not await is_category_id_exist(db, todo_item.category_id):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Category is not exist",
+                detail="category is not exist",
             )
 
         todo_item = await create_todo_item(db, todo_item, user.id)

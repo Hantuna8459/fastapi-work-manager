@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from .utils import email_test
 
 from .category.core import category_router
-from .todo_Item.core import todo_item_router
+from .todo_item.core import todo_item_router
 from .user_category.core import user_category_router
 from .user import register, login
 

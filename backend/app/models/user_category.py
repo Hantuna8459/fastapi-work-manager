@@ -16,4 +16,4 @@ class UserCategory(Base):
                          ForeignKey("category.id", ondelete="CASCADE", onupdate="CASCADE"),
                          nullable=False)
 
-    category = relationship("Category", back_populates="user_ids")
+    category = relationship("category", back_populates="user_ids")

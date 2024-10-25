@@ -7,7 +7,7 @@ from .list_user import list_user_router
 from .update import update_router
 
 
-category_router = APIRouter(prefix="/category", tags=["Category"])
+category_router = APIRouter(prefix="/category", tags=["category"])
 category_router.include_router(list_router)
 category_router.include_router(detail_router)
 category_router.include_router(add_router)
