@@ -42,7 +42,7 @@ UserNotActiveException = HTTPException(
 
 CategoryNameAlreadyUsed = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
-    detail="Category name is already used",
+    detail="category name is already used",
 )
 
 NotCreatorOfCategory = HTTPException(
@@ -57,7 +57,7 @@ CantAccessCategory = HTTPException(
 
 CategoryNotFound = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
-    detail="Category not found",
+    detail="category not found",
 )
 
 TodoItemNotFound = HTTPException(

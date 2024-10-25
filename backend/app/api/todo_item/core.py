@@ -8,7 +8,7 @@ from .update import update_router
 from .update_status import update_status_router
 
 
-todo_item_router = APIRouter(prefix="/todo_item", tags=["Todo_Item"])
+todo_item_router = APIRouter(prefix="/todo_item", tags=["todo_item"])
 todo_item_router.include_router(list_of_user_router)
 todo_item_router.include_router(list_of_category_router)
 todo_item_router.include_router(detail_router)
