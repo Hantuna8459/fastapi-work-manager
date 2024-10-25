@@ -1,4 +1,4 @@
-"""Delete old database first -> upgrade
+"""init migrate
 
 Revision ID: 67720c72e8ab
 Revises: 

@@ -11,7 +11,7 @@ from pydantic import ValidationError
 
 from backend.app.crud.user import (
     get_user_by_email_or_username, read_user_by_user_id)
-from backend.app.model import User
+from backend.app.models import User
 from backend.app.schema.token import TokenPayload
 from backend.app.core.config import settings
 from backend.app.core.database import get_db

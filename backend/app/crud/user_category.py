@@ -2,7 +2,7 @@ from uuid import UUID
 from sqlalchemy import func, delete
 from sqlalchemy.future import select
 
-from backend.app.model import UserCategory
+from backend.app.models import UserCategory
 from ..schema.user_category import UserCategorySchema
 from .core import *
 

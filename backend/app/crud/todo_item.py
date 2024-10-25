@@ -2,7 +2,7 @@ from uuid import UUID
 from sqlalchemy import func, delete, update
 from sqlalchemy.future import select
 
-from backend.app.model.todo_item import TodoItem, ItemStatus
+from backend.app.models.todo_item import TodoItem, ItemStatus
 from backend.app.core.exception import TodoItemStatusDoneException
 from backend.app.schema.todo_item import *
 from .core import *

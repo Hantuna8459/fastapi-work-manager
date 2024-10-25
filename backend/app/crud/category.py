@@ -2,7 +2,7 @@ from uuid import UUID
 from sqlalchemy import func, delete, update
 from sqlalchemy.future import select
 
-from backend.app.model import Category
+from backend.app.models import Category
 from .user_category import read_list_category_id_by_user_id
 from .core import *
 from ..schema.category import *

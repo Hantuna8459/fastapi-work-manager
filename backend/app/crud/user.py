@@ -1,5 +1,5 @@
 from uuid import UUID
-from backend.app.model.user import User
+from backend.app.models.user import User
 from backend.app.schema.user import UserRegisterRequest
 from backend.app.core.password import get_hashed_password
 from sqlalchemy import select

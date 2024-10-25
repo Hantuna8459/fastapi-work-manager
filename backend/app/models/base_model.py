@@ -2,7 +2,7 @@ import uuid
 from sqlalchemy import Column, UUID, DateTime
 from sqlalchemy.sql import func
 
-from backend.app.core.database import Base
+from ..core.database import Base
 
 
 class BaseModel(Base):
