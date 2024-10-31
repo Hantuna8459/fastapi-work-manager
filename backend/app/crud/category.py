@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from uuid import UUID
 from sqlalchemy import func, delete, update
 from sqlalchemy.future import select
@@ -94,7 +93,7 @@ async def update_category_by_id(session, category_id: UUID,
 
     query = (update(Category)
              .where(Category.id.__eq__(category_id))
-             .values(**update_data.__dict__,updated_at=datetime.now(timezone.utc)))
+             .values(**update_data.__dict__))
 
     await execute_with_no_refresh(session, query)
 

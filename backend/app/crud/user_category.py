@@ -23,7 +23,7 @@ async def read_list_user_id_by_category_id(session, category_id: UUID,
 
     limit = pagesize
     offset = (page - 1) * pagesize
-    query = select(UserCategory.user_id).where(UserCategory.category_id.__eq__(category_id)
+    query = (select(UserCategory.user_id).where(UserCategory.category_id.__eq__(category_id))
                                                .limit(limit).offset(offset))
     result = await execute_with_select(session, query)
     lst = result.fetchall()
@@ -34,10 +34,13 @@ async def read_list_user_id_by_category_id(session, category_id: UUID,
     return res
 
 
-async def read_list_category_id_by_user_id(session, user_id: UUID) \
+async def read_list_category_id_by_user_id(session, user_id: UUID, pagesize: int, page: int) \
         -> list[UUID]:
 
-    query = select(UserCategory.category_id).where(UserCategory.user_id.__eq__(user_id))
+    limit = pagesize
+    offset = (page - 1) * pagesize
+    query = (select(UserCategory.category_id).where(UserCategory.user_id.__eq__(user_id))
+             .limit(limit).offset(offset))
     result = await execute_with_select(session, query)
     lst = result.fetchall()
     res = []

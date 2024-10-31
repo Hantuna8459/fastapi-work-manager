@@ -14,7 +14,7 @@ from backend.app.schema.user_category import UserCategorySchema
 delete_router = APIRouter()
 
 
-@delete_router.delete('/delete', response_model=UserCategorySchema)
+@delete_router.delete('/delete', response_model=dict)
 async def add(user_category: UserCategorySchema,
                 user = Depends(get_current_user),
                  db=Depends(get_db)):
@@ -40,4 +40,4 @@ async def add(user_category: UserCategorySchema,
             detail=str(e),
         )
 
-    return JSONResponse(jsonable_encoder(user_category))
+    return JSONResponse(jsonable_encoder({"status": "OK"}))
