@@ -93,7 +93,7 @@ async def create_todo_item(session,
     return item
 
 
-async def update_todo_item_status_by_id(session, todo_item_id: UUID,)\
+async def update_todo_item_status_by_id(session, todo_item_id: UUID)\
         -> None:
 
     todo_item = await read_todo_item_by_id(session, todo_item_id)

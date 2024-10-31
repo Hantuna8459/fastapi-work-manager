@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
+from backend.app.main import ws_manager
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
 from backend.app.core.exception import (NotCreatorOfCategory, CategoryNotFound,
@@ -34,6 +35,7 @@ async def add(user_category: UserCategorySchema,
                 raise UserJoinedCategory
 
             await create_user_category(db, user_id, category_id)
+            ws_manager.add_user_id(category_id, user_id)
 
     except DatabaseExecutionException as e:
         raise HTTPException(

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
+from backend.app.main import ws_manager
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
 from backend.app.core.exception import CategoryNameAlreadyUsed
@@ -26,9 +27,9 @@ async def add(category: CategoryCreateSchema,
         category = await create_category(db, category, user_id)
         temp_category = category
         await create_user_category(
-            db, UserCategorySchema(category_id=temp_category.id,user_id=user_id)
+            db, user_id, temp_category.id
         )
-
+        ws_manager.add_category_id(temp_category.id)
     except DatabaseExecutionException as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

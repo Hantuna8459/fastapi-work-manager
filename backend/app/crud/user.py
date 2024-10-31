@@ -12,6 +12,21 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+async def read_list_email_by_list_user_id(session: AsyncSession, list_user_id: list[UUID]):
+
+    try:
+        query = (select(User.email)
+                 .where(User.id.in_(list_user_id)))
+        result = await session.execute(query)
+        res = result.fetchall()
+    except SQLAlchemyError as e:
+        raise DatabaseExecutionException(str(e))
+
+    if not res:
+        return None
+
+    return res
+
 async def read_user_private_by_user_id(session: AsyncSession, user_id: UUID) \
         -> UserPrivate | None:
 
