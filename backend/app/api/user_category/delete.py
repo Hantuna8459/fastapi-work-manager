@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from backend.app.main import ws_manager
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
 from backend.app.core.exception import (NotCreatorOfCategory, CategoryNotFound,
@@ -19,6 +18,8 @@ delete_router = APIRouter()
 async def add(user_category: UserCategorySchema,
                 user = Depends(get_current_user),
                  db=Depends(get_db)):
+
+    from backend.app.main import ws_manager
 
     try:
         if not await is_category_id_exist(db, user_category.category_id):
