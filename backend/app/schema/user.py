@@ -1,7 +1,14 @@
-import uuid
+from uuid import UUID
 from datetime import datetime
 from pydantic import EmailStr, Field, BaseModel
 from typing import Optional
+
+
+class UserPrivate(BaseModel):
+    id: UUID
+    password: str
+    is_active: bool
+
 
 class UserBase(BaseModel):
     email: EmailStr
@@ -22,5 +29,5 @@ class UserRegisterRequest(UserBase):
 
 
 class UserResponse(UserBase):
-    id: uuid.UUID
+    id: UUID
     last_login: Optional[datetime] = None

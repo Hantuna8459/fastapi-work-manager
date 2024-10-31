@@ -1,6 +1,6 @@
 from uuid import UUID
 from backend.app.models.user import User
-from backend.app.schema.user import UserRegisterRequest
+from backend.app.schema.user import UserRegisterRequest, UserPrivate
 from backend.app.core.password import get_hashed_password
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -12,9 +12,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-async def read_user_by_user_id(session: AsyncSession, user_id: UUID):
+async def read_user_private_by_user_id(session: AsyncSession, user_id: UUID) \
+        -> UserPrivate | None:
+
     try:
-        query = select(User).where(User.id.__eq__(user_id))
+        query = select(User.id, User.password, User.is_active).where(User.id.__eq__(user_id))
         result = await session.execute(query)
         user = result.fetchone()
     except SQLAlchemyError as e:
@@ -23,7 +25,7 @@ async def read_user_by_user_id(session: AsyncSession, user_id: UUID):
     if not user:
         return None
 
-    return user[0]
+    return UserPrivate(id=user[0], password=user[1], is_active=user[2])
 
 async def get_user_by_email_or_username(*, session: AsyncSession, email:str, username:str)\
         ->User | None:

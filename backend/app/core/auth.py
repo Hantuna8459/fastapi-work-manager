@@ -10,9 +10,10 @@ from fastapi.security import OAuth2PasswordBearer
 from pydantic import ValidationError
 
 from backend.app.crud.user import (
-    get_user_by_email_or_username, read_user_by_user_id)
+    get_user_by_email_or_username, read_user_private_by_user_id)
 from backend.app.models import User
 from backend.app.schema.token import TokenPayload
+from backend.app.schema.user import UserPrivate
 from backend.app.core.config import settings
 from backend.app.core.database import get_db
 from .password import verify_password
@@ -41,7 +42,7 @@ def create_access_token(subject: str | Any, expires_delta: timedelta) -> str:
 async def get_current_user(token: str = Depends(oauth2_scheme),
                      session: AsyncSession = Depends(get_db)
                      )\
-        ->User:
+        ->UserPrivate:
 
     try:
         payload = jwt.decode(
@@ -50,7 +51,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme),
         token_data = TokenPayload(**payload)# unpacks the dictionary payload into keyword arguments
     except(JWTError, ValidationError):
         raise CredentialsException
-    user = await read_user_by_user_id(session=session, user_id=UUID(token_data.sub) )
+    user = await read_user_private_by_user_id(session=session, user_id=UUID(token_data.sub) )
     if not user:
         raise CredentialsException
     if not user.is_active:
