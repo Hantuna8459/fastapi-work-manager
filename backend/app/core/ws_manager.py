@@ -1,3 +1,4 @@
+from fastapi import WebSocket
 from uuid import UUID
 
 from backend.app.core.database import SessionLocal
@@ -9,12 +10,23 @@ class WSManager:
         Chứa ws_manager, là một dict:
             1, key: là id của Category (UUID)
             2, value: là một set, gồm các id của User
-                đã tham gia Category có id = key (set(UUID))
+                đã join Category có id = key (set(UUID))
     """
 
+    # Singleton
+    _instance = None
+
+    # Attribute
+    user_ws: dict[UUID, WebSocket]
     ws_manager: dict[UUID, set[UUID]]
 
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(WSManager, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self) -> None:
+        self.user_ws = {}
         self.ws_manager = {}
         return
 
@@ -35,6 +47,39 @@ class WSManager:
         self.ws_manager = manager
         return
 
+    def add_ws(self, ws: dict[UUID, WebSocket]) -> None:
+        self.user_ws.update(ws)
+        return
+
+    def remove_ws(self, user_id: UUID) -> None:
+        self.user_ws.pop(user_id)
+        return
+
+    async def notify(self, category_id: UUID, message: str) -> None:
+        """
+            Gửi notification đến các User join Category qua websocket
+        """
+        ws = self.user_ws
+        user_ids = self.ws_manager.get(category_id)
+
+        for user_id in user_ids:
+            if ws.__contains__(user_id):
+                await ws.get(user_id).send_text(message)
+
+        return
+
+    def get_offline_user_ids(self, category_id: UUID) -> list[UUID]:
+        offline_user: list[UUID] = []
+        user_ids = self.ws_manager.get(category_id)
+        ws = self.user_ws
+
+        for user_id in user_ids:
+            if not ws.__contains__(user_id):
+                offline_user.append(user_id)
+
+        return offline_user
+
+    # Update dữ liệu của ws_manager
     def add_category_id(self, category_id: UUID) -> None:
         self.ws_manager[category_id] = set()
         return

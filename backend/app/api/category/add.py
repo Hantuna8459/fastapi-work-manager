@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
+from backend.app.core.ws_manager import WSManager
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
 from backend.app.core.exception import CategoryNameAlreadyUsed
@@ -18,7 +19,7 @@ async def add(category: CategoryCreateSchema,
                 user = Depends(get_current_user),
                  db=Depends(get_db)):
 
-    from backend.app.main import ws_manager
+    ws_manager = WSManager()
 
     try:
         if await is_category_name_is_used(db, category.name):

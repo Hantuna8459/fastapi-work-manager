@@ -1,14 +1,12 @@
 # app run here
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from uuid import UUID
 
 from backend.app.core.config import settings
 from backend.app.core.ws_manager import WSManager
 from backend.app.api.routes import router
 
 
-user_ws: dict[UUID, WebSocket] = {}
 ws_manager: WSManager = WSManager()
 
 

@@ -3,6 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from uuid import UUID
 
+from backend.app.core.ws_manager import WSManager
 from backend.app.utils import send_mail
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
@@ -22,9 +23,9 @@ async def detail(todo_item_id: UUID,
                  user=Depends(get_current_user),
                  db=Depends(get_db)):
 
-    from backend.app.core.notification import notify, get_offline_user_ids
-
     user_id = user.id
+    ws_manager = WSManager()
+
     try:
         todo_item = await read_todo_item_by_id(db, todo_item_id)
         if not todo_item:
@@ -40,14 +41,24 @@ async def detail(todo_item_id: UUID,
         message = (f"From {category_id}: {user_id} just change status of "
                    f"TodoItem id: {todo_item.id} name: {todo_item.name}")
 
-        # websocket
-        await notify(category_id, message)
+        # by websocket
+        await ws_manager.notify(category_id, message)
 
-        # email
-        offline_user = get_offline_user_ids(category_id)
-        lst = await read_list_email_by_list_user_id(db, offline_user)
-        for tup in lst:
-            send_mail(email_to=tup[0], subject="TodoItem Status Change", html_content=message)
+        # by email
+        offline_user = ws_manager.get_offline_user_ids(category_id)
+        pagesize = 10
+        page = 1
+
+        while True:
+            lst = await read_list_email_by_list_user_id(db, offline_user, pagesize, page)
+            if not lst:
+                break
+
+            for tup in lst:
+                send_mail(email_to=tup[0], subject="TodoItem Status Change",
+                          html_content=message)
+
+            page += 1
 
     except (DatabaseExecutionException, TodoItemStatusDoneException) as e:
         raise HTTPException(

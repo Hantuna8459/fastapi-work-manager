@@ -1,4 +1,6 @@
 from uuid import UUID
+
+from backend.app.crud.core import execute_with_select
 from backend.app.models.user import User
 from backend.app.schema.user import UserRegisterRequest, UserPrivate
 from backend.app.core.password import get_hashed_password
@@ -12,20 +14,28 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-async def read_list_email_by_list_user_id(session: AsyncSession, list_user_id: list[UUID]):
+async def read_list_email_by_list_user_id(session: AsyncSession, list_user_id: list[UUID],
+                                          pagesize: int , page: int) \
+        -> list[str] | None:
 
-    try:
-        query = (select(User.email)
-                 .where(User.id.in_(list_user_id)))
-        result = await session.execute(query)
-        res = result.fetchall()
-    except SQLAlchemyError as e:
-        raise DatabaseExecutionException(str(e))
+    limit = pagesize
+    offset = (page - 1) * pagesize
 
-    if not res:
+    query = (select(User.email)
+             .where(User.id.in_(list_user_id))
+             .limit(limit).offset(offset))
+
+    res = await execute_with_select(session, query)
+    email_list = res.fetchall()
+
+    if not email_list:
         return None
 
-    return res
+    lst = []
+    for email in email_list:
+        lst.append(email[0])
+
+    return lst
 
 async def read_user_private_by_user_id(session: AsyncSession, user_id: UUID) \
         -> UserPrivate | None:

@@ -21,7 +21,7 @@ class TodoItemBaseSchema(BaseModel):
 
     @field_validator("description")
     @classmethod
-    def validate_name(cls, description):
+    def validate_description(cls, description):
         if not isinstance(description, str):
             raise ValueError("Description must be a string")
 
