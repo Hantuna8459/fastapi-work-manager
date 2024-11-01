@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from uuid import UUID
 
 from backend.app.core.ws_manager import WSManager
-from backend.app.utils import send_mail
+from backend.app.utils import send_mail, generate_update_status_mail, EmailData
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
 from backend.app.core.exception import (NotCreatorOfTodoItem,
@@ -55,8 +55,9 @@ async def detail(todo_item_id: UUID,
                 break
 
             for tup in lst:
-                send_mail(email_to=tup[0], subject="TodoItem Status Change",
-                          html_content=message)
+                edata = generate_update_status_mail(tup[0], message)
+                send_mail(email_to=tup[0], subject=edata.subject,
+                          html_content=edata.html_content)
 
             page += 1
 

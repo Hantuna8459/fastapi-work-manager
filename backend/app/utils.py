@@ -102,13 +102,14 @@ def generate_register_mail(email_to:str, username:str)->EmailData:
     ) 
     return EmailData(html_content=html_content, subject=subject)
 
-def generate_update_status_mail(email_to: str)->EmailData:
+def generate_update_status_mail(email_to: str, content: str)->EmailData:
     subject = "TodoItem Status Change"
     html_content = render_email_template(
         template_name='update_item_status.html',
         context={
             "project_name":settings.PROJECT_NAME,
             "email":email_to,
+            "content": content,
         }
     )
     return EmailData(html_content=html_content, subject=subject)
