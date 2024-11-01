@@ -49,10 +49,10 @@ class Settings(BaseSettings):
         )
     
     # settings for tokens
-    ACCESS_TOKEN_EXPIRE_MINUTES:int = 15 # change later
+    ACCESS_TOKEN_EXPIRE_MINUTES:int = 30 # change later
     REFRESH_TOKEN_EXPIRE_MINUTES:int = 60*24 # 1 day (change later)
     
-    CRYPTCONTEXT_SCHEME:str = "bcrypt"
+    CRYPTCONTEXT_SCHEME:str
     
     ALGORITHM:str = "HS256"
     

@@ -60,6 +60,27 @@ def send_mail(*, email_to: str, subject:str="", html_content:str="")->None:
     finally:
         server.quit()
         
+def send_bulk_mail(*, email_to: list[str], subject:str="", html_content:str="")->None:
+    server = connect()
+    if not server:
+        print("SMTP server is not connected. Cannot send email.")
+        return
+    
+    msg = MIMEMultipart()
+    msg["From"] = settings.EMAILS_FROM_EMAIL
+    msg["Bcc"] = ', '.join(email_to)
+    msg["Subject"] = subject
+    
+    msg.attach(MIMEText(html_content, "html"))
+    
+    try:
+        server.send_message(msg)
+        logger.info("Email sent successfully!")
+    except Exception as e:
+        logger.exception(f"Error sending email: {e}")
+    finally:
+        server.quit()
+        
 def generate_test_email(email_to: str)->EmailData:
     subject = "Test email"
     html_content = render_email_template(

@@ -1,6 +1,8 @@
 from datetime import timedelta
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy import func
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.schema.token import Token
 from backend.app.core import auth
@@ -15,7 +17,7 @@ router = APIRouter()
 
 @router.post("/login", response_model=Token,)
 async def login_with_token(form_data: OAuth2PasswordRequestForm = Depends(),
-                           session=Depends(get_db)):
+                           session:AsyncSession=Depends(get_db)):
     user = await auth.authenticate(
         session=session, identifier=form_data.username, password=form_data.password
     )
@@ -23,6 +25,11 @@ async def login_with_token(form_data: OAuth2PasswordRequestForm = Depends(),
         raise InvalidUser
     if not user.is_active:
         raise UserNotActiveException
+    user.last_login = func.now()
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+    
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return Token(
         access_token=auth.create_access_token(
