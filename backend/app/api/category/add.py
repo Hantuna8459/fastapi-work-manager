@@ -9,6 +9,7 @@ from backend.app.core.exception import CategoryNameAlreadyUsed
 from backend.app.crud.category import create_category, is_category_name_is_used
 from backend.app.crud.user_category import create_user_category
 from backend.app.schema.category import CategoryCreateSchema, CategorySchema
+from backend.app.schema.user_category import UserCategorySchema
 
 
 add_router = APIRouter()
@@ -41,4 +42,4 @@ async def add(category: CategoryCreateSchema,
             detail=str(e),
         )
 
-    return JSONResponse(jsonable_encoder(temp_category))
+    return JSONResponse(jsonable_encoder(category))

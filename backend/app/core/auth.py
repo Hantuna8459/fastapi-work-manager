@@ -10,7 +10,9 @@ from fastapi.security import OAuth2PasswordBearer
 from pydantic import ValidationError
 
 from backend.app.crud.user import (
-    get_user_by_email_or_username, read_user_private_by_user_id)
+    get_user_by_email,
+    get_user_by_username,
+    read_user_private_by_user_id,)
 from backend.app.models import User
 from backend.app.schema.token import TokenPayload
 from backend.app.schema.user import UserPrivate
@@ -61,12 +63,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme),
 async def authenticate(*, session:AsyncSession, identifier: str,
                        password: str)\
         ->User|None:
-
-    db_user = await get_user_by_email_or_username(
+    db_user = await get_user_by_username(
         session=session,
         email=identifier,
         username=identifier,
-        )
+    )
+    if not db_user:
+        db_user = await get_user_by_email(session=session, email=identifier)
     if not db_user:
         return None
     if not verify_password(password, db_user.password):

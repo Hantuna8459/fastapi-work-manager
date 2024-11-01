@@ -1,33 +1,48 @@
+import re
 from uuid import UUID
-from datetime import datetime
-from pydantic import EmailStr, Field, BaseModel
-from typing import Optional
+from pydantic import EmailStr, Field, BaseModel, field_validator
 
-
+class UserBase(BaseModel):
+    email: EmailStr
+    username: str
+    
 class UserPrivate(BaseModel):
     id: UUID
     password: str
     is_active: bool
 
-
-class UserBase(BaseModel):
-    email: EmailStr
-    username: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    is_active: bool = True
-    
-    class Config:
-        form_atrributes = True
-
-    
-class UserRegisterRequest(UserBase):
+class UserRegisterRequest(BaseModel):
     email:EmailStr
-    password: str = Field(min_length=4, max_length=40)
-    password_confirm: str = Field(min_length=4, max_length=40)
-    username: str
+    username: str = Field(min_length=1, max_length=40)
+    password: str = Field(min_length=8, max_length=40)
+    password_confirm: str = Field(min_length=8, max_length=40)
 
+class UsernameUpdateRequest(BaseModel):
+    username: str = Field(min_length=1, max_length=40)
+
+class FullnameUpdateRequest(BaseModel):
+    first_name: str = Field(min_length=1, max_length=255)
+    last_name: str = Field(min_length=1, max_length=255)
+
+class UserUpdatePassword(BaseModel):
+    current_password: str = Field(min_length=8, max_length=40)
+    new_password: str = Field(min_length=8, max_length=40)
+    password_confirm: str = Field(min_length=8, max_length=40)
+
+    @field_validator("new_password")
+    def validate_password(cls, value):
+        if not re.search(r"[a-zA-Z]",value):
+            raise ValueError("Password must contain at least one character.")
+        if not re.search(r"[0-9]",value):
+            raise ValueError("Password must contain at least one number.")
+        return value
 
 class UserResponse(UserBase):
     id: UUID
-    last_login: Optional[datetime] = None
+
+class ResetPassword(BaseModel):
+    token: str
+    new_password: str = Field(min_length=8, max_length=40)
+
+class Deactivate(BaseModel):
+    is_active: bool = False
