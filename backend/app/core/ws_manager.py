@@ -23,11 +23,12 @@ class WSManager:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(WSManager, cls).__new__(cls)
+            cls._instance.user_ws = {}
+            cls._instance.ws_manager = {}
+
         return cls._instance
 
     def __init__(self) -> None:
-        self.user_ws = {}
-        self.ws_manager = {}
         return
 
     async def add_information(self) -> None:

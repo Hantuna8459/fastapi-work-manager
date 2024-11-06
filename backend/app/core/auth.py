@@ -65,7 +65,7 @@ async def authenticate(*, session:AsyncSession, identifier: str,
         ->User|None:
     db_user = await get_user_by_username(
         session=session,
-        email=identifier,
+        # email=identifier,
         username=identifier,
     )
     if not db_user:
