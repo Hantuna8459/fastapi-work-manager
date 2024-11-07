@@ -1,4 +1,4 @@
-from fastapi import WebSocket
+from fastapi.websockets import WebSocket, WebSocketState
 from uuid import UUID
 
 from backend.app.core.database import SessionLocal
@@ -65,7 +65,14 @@ class WSManager:
 
         for user_id in user_ids:
             if ws.__contains__(user_id):
-                await ws.get(user_id).send_text(message)
+                try:
+                    uws: WebSocket = ws.get(user_id)
+                    if uws.client_state == WebSocketState.CONNECTED:
+                        await uws.send_text(message)
+
+                except Exception as e:
+                    print(f"Error sending message to user {user_id}: {e}")
+                    self.user_ws.pop(user_id)
 
         return
 
