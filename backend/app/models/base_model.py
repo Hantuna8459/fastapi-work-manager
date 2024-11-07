@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime, timezone
 from sqlalchemy import Column, UUID, DateTime
 from sqlalchemy.sql import func
 
@@ -11,5 +10,4 @@ class BaseModel(Base):
     
     id = Column("id", UUID, primary_key= True, index= True, default=uuid.uuid4)
     created_at = Column("created_at", DateTime, server_default=func.now())
-    updated_at = Column("updated_at", DateTime, nullable=True,
-                        onupdate=datetime.now(timezone.utc))
+    updated_at = Column("updated_at", DateTime, nullable=True, onupdate=func.now())

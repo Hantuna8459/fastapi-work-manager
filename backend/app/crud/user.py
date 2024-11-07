@@ -23,32 +23,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-async def read_list_email_by_list_user_id(session: AsyncSession, list_user_id: list[UUID],
-                                          pagesize: int , page: int) \
-        -> list[str] | None:
-
-    limit = pagesize
-    offset = (page - 1) * pagesize
-
-    query = (select(User.email)
-             .where(User.id.in_(list_user_id))
-             .limit(limit).offset(offset))
-
-    res = await execute_with_select(session, query)
-    email_list = res.fetchall()
-
-    if not email_list:
-        return None
-
-    lst = []
-    for email in email_list:
-        lst.append(email[0])
-
-    return lst
-
-async def read_user_private_by_user_id(session: AsyncSession, user_id: UUID) \
-        -> UserPrivate | None:
-
+async def read_user_private_by_user_id(session: AsyncSession, user_id: UUID)\
+    ->UserPrivate|None:
     try:
         query = select(User.id, User.password, User.is_active).where(User.id.__eq__(user_id))
         result = await session.execute(query)
