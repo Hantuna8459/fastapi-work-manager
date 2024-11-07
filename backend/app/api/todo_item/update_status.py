@@ -51,12 +51,12 @@ async def detail(todo_item_id: UUID,
 
         while True:
             lst = await read_list_email_by_list_user_id(db, offline_user, pagesize, page)
-            if not lst:
+            if not lst or len(lst) == 0:
                 break
 
             for tup in lst:
-                edata = generate_update_status_mail(tup[0], message)
-                send_mail(email_to=tup[0], subject=edata.subject,
+                edata = generate_update_status_mail(tup, message)
+                send_mail(email_to=tup, subject=edata.subject,
                           html_content=edata.html_content)
 
             page += 1
