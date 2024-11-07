@@ -16,16 +16,17 @@ router = APIRouter()
 
 async def validate_user_data(session: AsyncSession, user_in: UserRegisterRequest):
     # check if email or username already registed
-    existed_user = await user.get_user_by_email_or_username(
-        session=session,
-        email=user_in.email,
-        username=user_in.username
+    existing_email = await user.get_user_by_email(
+        session=session, email=user_in.email,
     )
-    if existed_user:
-        if existed_user.email == user_in.email:
-            raise EmailDuplicateException
-        if existed_user.username == user_in.username:
-            raise UsernameDuplicateException
+    if existing_email:
+        raise EmailDuplicateException
+    
+    existing_username = await user.get_user_by_username(
+        session=session, username=user_in.username,
+    )
+    if existing_username:
+        raise UsernameDuplicateException
 
     # check unmatched password
     if not user_in.password_confirm == user_in.password:
