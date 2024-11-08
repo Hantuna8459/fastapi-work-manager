@@ -5,9 +5,10 @@ from uuid import UUID
 
 from backend.app.core.database import get_db, DatabaseExecutionException
 from backend.app.core.auth import get_current_user
-from backend.app.core.exception import NotCreatorOfCategory
-from backend.app.crud.category import is_creator_of_category
-from backend.app.crud.category import update_category_by_id
+from backend.app.core.exception import NotCreatorOfCategory, CategoryNotFound
+from backend.app.crud.category import (is_creator_of_category,
+                                       update_category_by_id,
+                                       is_category_id_exist)
 from backend.app.schema.category import CategoryCreateSchema
 
 
@@ -21,6 +22,9 @@ async def detail(category_id: UUID,
                  db=Depends(get_db)):
 
     try:
+        if not await is_category_id_exist(db, category_id):
+            raise CategoryNotFound
+
         if not await is_creator_of_category(db, category_id, user.id):
             raise NotCreatorOfCategory
 

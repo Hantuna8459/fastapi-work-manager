@@ -7,6 +7,12 @@ from ..schema.user_category import UserCategorySchema
 from .core import *
 
 
+async def read_list(session):
+
+    query = select(UserCategory.category_id, UserCategory.user_id)
+    result = await execute_with_select(session, query)
+    return result.fetchall()
+
 async def is_user_join_category(session, user_id: UUID, category_id: UUID)\
         -> bool:
 
@@ -17,10 +23,14 @@ async def is_user_join_category(session, user_id: UUID, category_id: UUID)\
     return result.scalar() > 0
 
 
-async def read_list_user_id_by_category_id(session, category_id: UUID)\
+async def read_list_user_id_by_category_id(session, category_id: UUID,
+                                           pagesize: int, page: int)\
         -> list[UUID]:
 
-    query = select(UserCategory.user_id).where(UserCategory.category_id.__eq__(category_id))
+    limit = pagesize
+    offset = (page - 1) * pagesize
+    query = (select(UserCategory.user_id).where(UserCategory.category_id.__eq__(category_id))
+                                               .limit(limit).offset(offset))
     result = await execute_with_select(session, query)
     lst = result.fetchall()
     res = []
@@ -30,10 +40,18 @@ async def read_list_user_id_by_category_id(session, category_id: UUID)\
     return res
 
 
-async def read_list_category_id_by_user_id(session, user_id: UUID) \
+async def read_list_category_id_by_user_id(session, user_id: UUID, pagesize: int | None, page: int | None) \
         -> list[UUID]:
 
-    query = select(UserCategory.category_id).where(UserCategory.user_id.__eq__(user_id))
+    if (not pagesize) & (not page):
+        limit = pagesize
+        offset = (page - 1) * pagesize
+        query = (select(UserCategory.category_id).where(UserCategory.user_id.__eq__(user_id))
+                .limit(limit).offset(offset))
+
+    else:
+        query = (select(UserCategory.category_id).where(UserCategory.user_id.__eq__(user_id)))
+
     result = await execute_with_select(session, query)
     lst = result.fetchall()
     res = []
@@ -43,17 +61,17 @@ async def read_list_category_id_by_user_id(session, user_id: UUID) \
     return res
 
 
-async def create_user_category(session, user_category: UserCategorySchema) \
-        -> UserCategorySchema:
+async def create_user_category(session, user_id: UUID, category_id: UUID) \
+        -> None:
 
-    item = UserCategory(user_id=user_category.user_id,
-                        category_id=user_category.category_id)
+    item = UserCategory(user_id=user_id,category_id=category_id)
     item = await execute_with_refresh(session, item)
-    return item
 
-async def delete_user_category(session, user_category: UserCategorySchema):
+
+async def delete_user_category(session, user_id: UUID, category_id: UUID):
+
     query = (delete(UserCategory)
-             .where(UserCategory.user_id.__eq__(user_category.user_id)&
-                    UserCategory.category_id.__eq__(user_category.category_id)))
+            .where(UserCategory.user_id.__eq__(user_id)&
+                UserCategory.category_id.__eq__(category_id)))
 
     await execute_with_no_refresh(session, query)

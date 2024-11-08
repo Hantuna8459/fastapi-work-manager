@@ -24,7 +24,7 @@ async def read_todo_items(session, pagesize: int, page: int,
     elif (user_id is not None) & (category_id is None):
         where_clause = (TodoItem.created_by.__eq__(user_id))
 
-    elif (user_id is None) & (category_id is None):
+    elif (user_id is None) & (category_id is not None):
         where_clause = (TodoItem.category_id.__eq__(category_id))
 
     query = (select(TodoItem.id, TodoItem.name,

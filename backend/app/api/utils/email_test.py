@@ -6,6 +6,7 @@ from backend.app.utils import send_mail, generate_test_email, generate_daily_sta
 from backend.app.crud.user import get_user_with_todo_item_detail
 from backend.app.background_service import process_task_details_result
 
+
 router = APIRouter()
 
 @router.post("/test-email/send-one")

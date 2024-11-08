@@ -81,7 +81,9 @@ def send_bulk_mail(*, email_to: list[str], subject:str="", html_content:str="")-
     finally:
         server.quit()
         
+
 def generate_test_email(email_to: str, username:str)->EmailData:
+
     subject = "Test email"
     html_content = render_email_template(
         template_name="test_email.html",
@@ -103,7 +105,9 @@ def generate_register_mail(email_to:str, username:str)->EmailData:
     ) 
     return EmailData(html_content=html_content, subject=subject)
 
+
 def generate_update_status_mail(email_to: str)->EmailData:
+
     subject = "TodoItem Status Change"
     html_content = render_email_template(
         template_name='update_item_status.html',
