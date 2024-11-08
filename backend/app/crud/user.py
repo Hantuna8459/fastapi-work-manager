@@ -77,15 +77,6 @@ async def get_user_by_username(*, session: AsyncSession, username:str)\
     user = result.scalar_one_or_none()
     return user
 
-async def get_all_email(session: AsyncSession)->List[str]:
-    query = select(User.email)
-    result = await execute_with_select(session, query)
-    list = result.fetchall()
-    emails = []
-    for x in list:
-        emails.append(x[0])
-    return emails
-
 async def register_request(*, session: AsyncSession, request: UserRegisterRequest)\
     ->Any:
 
