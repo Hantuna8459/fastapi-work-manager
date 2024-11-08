@@ -8,13 +8,15 @@ from .core import *
 from ..schema.category import *
 
 
-async def read_categories_by_user_id(session, user_id: UUID) \
+async def read_categories_by_user_id(session, user_id: UUID, pagesize: int, page: int) \
         -> list[CategorySchema] | None:
 
-    lst = await read_list_category_id_by_user_id(session, user_id)
+    limit = pagesize
+    offset = (page - 1) * pagesize
+    lst = await read_list_category_id_by_user_id(session, user_id, pagesize, page)
     query = (select(Category.id, Category.name, Category.description,
                     Category.created_by, Category.updated_at)
-             .where(Category.id.in_(lst)))
+             .where(Category.id.in_(lst)).limit(limit).offset(offset))
 
     result = await execute_with_select(session, query)
     categories = result.fetchall()

@@ -90,7 +90,6 @@ def generate_test_email(email_to: str)->EmailData:
     return EmailData(html_content=html_content, subject=subject)
 
 def generate_register_mail(email_to:str, username:str)->EmailData:
-    # project_name = settings.PROJECT_NAME
     subject = "registration successful"
     html_content = render_email_template(
         template_name='new_user_mail.html',
@@ -101,4 +100,16 @@ def generate_register_mail(email_to:str, username:str)->EmailData:
             #todo: add link to return to login page
         }
     ) 
+    return EmailData(html_content=html_content, subject=subject)
+
+def generate_update_status_mail(email_to: str, content: str)->EmailData:
+    subject = "TodoItem Status Change"
+    html_content = render_email_template(
+        template_name='update_item_status.html',
+        context={
+            "project_name":settings.PROJECT_NAME,
+            "email":email_to,
+            "content": content,
+        }
+    )
     return EmailData(html_content=html_content, subject=subject)

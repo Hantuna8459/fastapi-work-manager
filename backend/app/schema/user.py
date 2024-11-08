@@ -10,7 +10,7 @@ class UserPrivate(BaseModel):
     id: UUID
     password: str
     is_active: bool
- 
+
 class UserRegisterRequest(BaseModel):
     email:EmailStr
     username: str = Field(min_length=1, max_length=40)
@@ -19,7 +19,7 @@ class UserRegisterRequest(BaseModel):
 
 class UsernameUpdateRequest(BaseModel):
     username: str = Field(min_length=1, max_length=40)
-    
+
 class FullnameUpdateRequest(BaseModel):
     first_name: str = Field(min_length=1, max_length=255)
     last_name: str = Field(min_length=1, max_length=255)
@@ -28,7 +28,7 @@ class UserUpdatePassword(BaseModel):
     current_password: str = Field(min_length=8, max_length=40)
     new_password: str = Field(min_length=8, max_length=40)
     password_confirm: str = Field(min_length=8, max_length=40)
-    
+
     @field_validator("new_password")
     def validate_password(cls, value):
         if not re.search(r"[a-zA-Z]",value):
@@ -39,10 +39,10 @@ class UserUpdatePassword(BaseModel):
 
 class UserResponse(UserBase):
     id: UUID
-    
+
 class ResetPassword(BaseModel):
     token: str
     new_password: str = Field(min_length=8, max_length=40)
-    
+
 class Deactivate(BaseModel):
     is_active: bool = False
