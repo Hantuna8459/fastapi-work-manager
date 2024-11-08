@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List, Dict
 from pathlib import Path
 from .core.config import settings
 from jinja2 import Template
@@ -74,18 +74,19 @@ def send_bulk_mail(*, email_to: list[str], subject:str="", html_content:str="")-
     msg.attach(MIMEText(html_content, "html"))
     
     try:
-        server.send_message(msg)
+        server.sendmail(msg)
         logger.info("Email sent successfully!")
     except Exception as e:
         logger.exception(f"Error sending email: {e}")
     finally:
         server.quit()
         
-def generate_test_email(email_to: str)->EmailData:
+def generate_test_email(email_to: str, username:str)->EmailData:
     subject = "Test email"
     html_content = render_email_template(
         template_name="test_email.html",
-        context={"email":email_to},
+        context={"email":email_to,
+                 "username":username,},
     )
     return EmailData(html_content=html_content, subject=subject)
 
@@ -109,6 +110,20 @@ def generate_update_status_mail(email_to: str)->EmailData:
         context={
             "project_name":settings.PROJECT_NAME,
             "email":email_to,
+        }
+    )
+    return EmailData(html_content=html_content, subject=subject)
+
+def generate_daily_status_mail(email_to: str, username: str, task_data: List[Dict[str, Any]])->EmailData:
+    subject = "Todo reminder"
+    
+    html_content = render_email_template(
+        template_name="daily_todo_item.html",
+        context={
+            "project_name":settings.PROJECT_NAME,
+            "email":email_to,
+            "username": username,
+            "task_data": task_data,
         }
     )
     return EmailData(html_content=html_content, subject=subject)

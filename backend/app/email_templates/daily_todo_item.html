@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Summary</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333333; background-color: #f7f7f7; margin: 0; padding: 0;">
+  <div style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <h2 style="color: #333333; text-align: center;">Hello {{ username }},</h2>
+    <p style="font-size: 16px; line-height: 1.5; color: #666666;">Here is an update on your current tasks:</p>
+
+    {% for task in task_data %}
+    <div style="margin-top: 20px; padding: 10px; border: 1px solid #dddddd; border-radius: 6px;">
+      <h3 style="margin: 0 0 10px 0; color: #4a90e2;">Category: {{ task.category_name }}</h3>
+      <p style="margin: 5px 0; font-size: 14px; color: #333333;">Total tasks: {{ task.task_count }}</p>
+      
+      <ul style="padding-left: 20px; color: #333333;">
+        {% for name in task.task_name %}
+        <li style="font-size: 14px; line-height: 1.6;">{{ name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+
+    <p style="font-size: 16px; line-height: 1.5; color: #666666; margin-top: 20px;">Thank you for using our service!</p>
+  </div>
+</body>
+</html>

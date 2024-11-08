@@ -1,10 +1,15 @@
-from typing import List, Any
+from typing import Any, Dict
 from uuid import UUID
+from backend.app.core.database import SessionLocal
 from backend.app.models.user import User
+from backend.app.models.todo_item import TodoItem, ItemStatus
+from backend.app.models.category import Category
+from backend.app.models.user_category import UserCategory
 from backend.app.crud.core import (
     execute_with_refresh,
     execute_with_select,
-    execute_with_no_refresh,)
+    execute_with_no_refresh,
+)
 from backend.app.schema.user import (
     UserRegisterRequest,
     UsernameUpdateRequest,
@@ -17,11 +22,6 @@ from sqlalchemy import select, func, update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.core.database import DatabaseExecutionException
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 
 async def read_user_private_by_user_id(session: AsyncSession, user_id: UUID)\
     ->UserPrivate|None:
@@ -59,14 +59,35 @@ async def get_user_by_username(*, session: AsyncSession, username:str)\
     user = result.scalar_one_or_none()
     return user
 
-async def get_all_email(session: AsyncSession)->List[str]:
-    query = select(User.email)
-    result = await execute_with_select(session, query)
-    list = result.fetchall()
-    emails = []
-    for x in list:
-        emails.append(x[0])
-    return emails
+async def get_user_with_todo_item_detail()->Any:
+    async with SessionLocal() as session:
+        query = (select(
+                        User.email,
+                        User.username,
+                        func.count(TodoItem.id).label("task_count"),
+                        Category.name.label("category_name"),
+                        func.array_agg(TodoItem.name).label("task_name"))
+                .join(UserCategory, UserCategory.user_id == User.id)
+                .join(Category, Category.id == UserCategory.category_id)
+                .join(TodoItem, TodoItem.category_id == Category.id)
+                .where(User.is_active == True, TodoItem.status != ItemStatus.Done.value)
+                .group_by(User.email, User.username, Category.name)
+                )
+        query_data = await execute_with_select(session, query)
+        result = query_data.fetchall()
+
+        response_data = [
+            {
+                "email": column.email,
+                "username": column.username,
+                "task_count": column.task_count,
+                "category_name": column.category_name,
+                "task_name": column.task_name,
+            }
+            for column in result
+        ]
+
+    return response_data
     
 async def register_request(*, session: AsyncSession, request: UserRegisterRequest)\
     ->Any:
