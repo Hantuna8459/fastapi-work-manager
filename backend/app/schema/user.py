@@ -20,6 +20,7 @@ class UserRegisterRequest(BaseModel):
 class UsernameUpdateRequest(BaseModel):
     username: str = Field(min_length=1, max_length=40)
 
+
 class FullnameUpdateRequest(BaseModel):
     first_name: str = Field(min_length=1, max_length=255)
     last_name: str = Field(min_length=1, max_length=255)
@@ -43,6 +44,7 @@ class UserResponse(UserBase):
 class ResetPassword(BaseModel):
     token: str
     new_password: str = Field(min_length=8, max_length=40)
+
 
 class Deactivate(BaseModel):
     is_active: bool = False

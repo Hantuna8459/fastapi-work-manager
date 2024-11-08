@@ -9,6 +9,7 @@ from .user_category.core import user_category_router
 from .user import register, login, update
 from .web_socket.core import ws_router
 
+
 router = APIRouter()
 router.include_router(todo_item_router)
 router.include_router(category_router)
