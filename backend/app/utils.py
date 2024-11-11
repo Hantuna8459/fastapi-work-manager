@@ -93,6 +93,7 @@ def generate_test_email(email_to: str, username:str)->EmailData:
     return EmailData(html_content=html_content, subject=subject)
 
 def generate_register_mail(email_to:str, username:str)->EmailData:
+    # project_name = settings.PROJECT_NAME
     subject = "registration successful"
     html_content = render_email_template(
         template_name='new_user_mail.html',
@@ -120,7 +121,7 @@ def generate_update_status_mail(email_to: str)->EmailData:
 
 def generate_daily_status_mail(email_to: str, username: str, task_data: List[Dict[str, Any]])->EmailData:
     subject = "Todo reminder"
-    
+
     html_content = render_email_template(
         template_name="daily_todo_item.html",
         context={

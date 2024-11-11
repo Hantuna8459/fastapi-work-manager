@@ -73,7 +73,7 @@ async def get_user_by_email(*, session: AsyncSession, email:str)\
     user = result.scalar_one_or_none()
     return user
 
-  
+
 async def get_user_by_username(*, session: AsyncSession, username:str)\
         ->User|None:
     """
@@ -114,7 +114,7 @@ async def get_user_with_todo_item_detail()->Any:
         ]
 
     return response_data
-    
+
 
 async def register_request(*, session: AsyncSession, request: UserRegisterRequest)\
     ->Any:

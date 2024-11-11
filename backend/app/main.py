@@ -23,6 +23,19 @@ async def lifespan(fastapi_app: FastAPI):
     scheduler.shutdown()
 
 
+ws_manager: WSManager = WSManager()
+
+
+@asynccontextmanager
+async def lifespan(fastapi_app: FastAPI):
+    # Lấy dữ liệu từ db và xau dưng instance của WSManager
+    print("Start...")
+    await ws_manager.add_information()
+
+    yield
+    print("Close...")
+
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     lifespan=lifespan,
