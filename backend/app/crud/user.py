@@ -25,11 +25,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.core.database import DatabaseExecutionException
 
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-
 async def read_list_email_by_list_user_id(session: AsyncSession, list_user_id: list[UUID],
                                           pagesize: int , page: int) \
         -> list[str] | None:
@@ -85,7 +80,7 @@ async def get_user_by_username(*, session: AsyncSession, username:str)\
     user = result.scalar_one_or_none()
     return user
 
-async def get_user_with_todo_item_detail()->Any:
+async def get_user_with_todo_item_detail()->Any|None:
     async with SessionLocal() as session:
         query = (select(
                         User.email,
@@ -101,14 +96,16 @@ async def get_user_with_todo_item_detail()->Any:
                 )
         query_data = await execute_with_select(session, query)
         result = query_data.fetchall()
+        if not result:
+            return None
 
         response_data = [
             {
-                "email": column.email,
-                "username": column.username,
-                "task_count": column.task_count,
-                "category_name": column.category_name,
-                "task_name": column.task_name,
+                "email": column[0],
+                "username": column[1],
+                "task_count": column[2],
+                "category_name": column[3],
+                "task_name": column[4],
             }
             for column in result
         ]
@@ -131,7 +128,7 @@ async def register_request(*, session: AsyncSession, request: UserRegisterReques
 async def user_update_username(*, session: AsyncSession,
                                user_id:UUID,
                                request: UsernameUpdateRequest)\
-    ->Any:
+                                ->Any:
     query = (update(User)
              .where(User.id == user_id)
              .values(username=request.username)
@@ -143,7 +140,7 @@ async def user_update_username(*, session: AsyncSession,
 async def user_update_fullname(*, session: AsyncSession,
                                user_id:UUID,
                                request: FullnameUpdateRequest)\
-    ->Any:
+                                ->Any:
     query = (update(User)
              .where(User.id == user_id)
              .values(**request.__dict__)
@@ -153,7 +150,7 @@ async def user_update_fullname(*, session: AsyncSession,
 async def user_update_password(*, session: AsyncSession,
                                user_id:UUID,
                                request: UserUpdatePassword)\
-    -> Any:
+                                -> Any:
     hashed_password = get_hashed_password(request.new_password)
     query = (update(User)
              .where(User.id == user_id)

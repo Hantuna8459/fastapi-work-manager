@@ -26,7 +26,6 @@ async def login_with_token(form_data: OAuth2PasswordRequestForm = Depends(),
     if not user.is_active:
         raise UserNotActiveException
     user.last_login = func.now()
-    session.add(user)
     await session.commit()
     await session.refresh(user)
     
