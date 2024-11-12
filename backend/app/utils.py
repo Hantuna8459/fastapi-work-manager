@@ -1,6 +1,8 @@
 from typing import Any, List, Dict
 from pathlib import Path
-from .core.config import settings
+from collections import defaultdict
+from backend.app.core.config import settings
+from backend.app.crud.user import get_user_with_todo_item_detail
 from jinja2 import Template
 import logging
 import smtplib
@@ -132,3 +134,31 @@ def generate_daily_status_mail(email_to: str, username: str, task_data: List[Dic
         }
     )
     return EmailData(html_content=html_content, subject=subject)
+
+def process_query_result(response_data: List[Dict]) -> List[Dict[str, Any]]:
+    """
+    This function processes the query result into a list of users, each containing 
+    a list of task_data aggregated by category.
+    """
+    users = defaultdict(lambda: {"email": None, "username": None, "task_data": []})
+
+    for row in response_data:
+        email = row["email"]
+        username = row["username"]
+        task_count = row["task_count"]
+        category_name = row["category_name"]
+        task_name = row["task_name"]
+        # Initialize user entry if not already
+        user = users[email]
+        user["email"] = email
+        user["username"] = username
+
+        # Append task data grouped by category
+        user["task_data"].append({
+            "task_count": task_count,
+            "category_name": category_name,
+            "task_name": task_name
+        })
+
+    # Convert defaultdict to list
+    return list(users.values())

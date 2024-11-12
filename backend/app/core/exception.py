@@ -85,6 +85,11 @@ UserNotJoinedCategory = HTTPException(
     detail="User is not joined this category."
 )
 
+SomeThingWentWrong = HTTPException(
+    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    detail="Some thing went wrong, please try again later."
+)
+
 class TodoItemStatusDoneException(Exception):
     def __init__(self):
         self.message = "Todo Item is Done!"

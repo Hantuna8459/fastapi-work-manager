@@ -2,9 +2,13 @@ from fastapi import APIRouter, Depends
 from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.utils import send_mail, generate_test_email, generate_daily_status_mail
+from backend.app.utils import (
+    send_mail,
+    generate_test_email, 
+    generate_daily_status_mail,
+    process_query_result,
+    )
 from backend.app.crud.user import get_user_with_todo_item_detail
-from backend.app.background_service import process_task_details_result
 
 
 router = APIRouter()
@@ -27,7 +31,7 @@ async def send_daily_email()->None:
     Email to inform user about unfinished item
     """
     query_data = await get_user_with_todo_item_detail()
-    organized_data = process_task_details_result(query_data)
+    organized_data = process_query_result(query_data)
     
     for user_data in organized_data:
         email = user_data["email"]
