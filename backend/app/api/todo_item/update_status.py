@@ -55,7 +55,7 @@ async def detail(todo_item_id: UUID,
                 break
 
             for tup in lst:
-                edata = generate_update_status_mail(tup, message)
+                edata = generate_update_status_mail(tup)
                 send_mail(email_to=tup, subject=edata.subject,
                           html_content=edata.html_content)
 

@@ -8,6 +8,7 @@ from backend.app.core.exception import (
     EmailDuplicateException,
     UsernameDuplicateException,
     UnmatchedPasswordException,
+    SomeThingWentWrong
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -44,9 +45,12 @@ async def register_user(*, user_in: UserRegisterRequest,
     # send email
     if new_user:
         email_data = generate_register_mail(email_to=user_in.email, username=user_in.username)
-        send_mail(
-            email_to=user_in.email,
-            subject=email_data.subject,
-            html_content=email_data.html_content,
-        )
+        try:
+            send_mail(
+                email_to=user_in.email,
+                subject=email_data.subject,
+                html_content=email_data.html_content,
+            )
+        except RuntimeError as e:
+            return SomeThingWentWrong
     return new_user
